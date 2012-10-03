@@ -1,0 +1,19 @@
+package org.greens.VoterContactManager
+
+class VoterContactManagerService {
+    static transactional = true
+    
+    def getInit(stateCode = 'FL') {
+        def state = State.findByCode(stateCode)
+        return [
+            races: Race.findAllByState(state),
+            genders: Gender.findAllByState(state),
+            counties: County.findAllByState(state),
+            parties: Party.findAllByState(state),
+            statuses: VoterStatus.findAllByState(state),
+            importDates: ImportKey.findAllByState(state).collect { importKey ->
+                return importKey.snapshotDate
+            }
+        ]
+    }
+}
