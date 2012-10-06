@@ -193,6 +193,14 @@
                                     <select id="partyVoted" name="partyVoted" />
                                   </td>
                                 </tr>
+                                <tr>
+                                  <td>
+                                    <label for="minVoteCount">Voted Count Threshold</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <input id="minVoteCount" name="minVoteCount" type="number" />
+                                  </td>
+                                </tr>
                               </tbody>
                             </table>
                           </td>
@@ -292,6 +300,46 @@
                                     <input id="precinctSuffix" name="precinctSuffix" type="text" />
                                   </td>
                                 </tr>
+                                <tr>
+                                  <td>
+                                    <label for="countyPrecinct">County Precinct</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <input id="countyPrecinct" name="countyPrecinct" type="text" />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <label for="cityPrecinct">City Precinct</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <input id="cityPrecinct" name="cityPrecinct" type="text" />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <label for="judicialDistrict">Judicial District</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <input id="judicialDistrict" name="judicialDistrict" type="text" />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <label for="schoolDistrict">School District</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <input id="schoolDistrict" name="schoolDistrict" type="text" />
+                                  </td>
+                                </tr>      
+                                <tr>
+                                  <td>
+                                    <label for="landDistrict">Land District</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <input id="landDistrict" name="landDistrict" type="text" />
+                                  </td>
+                                </tr>      
                               </tbody>
                             </table>
                           </td>

@@ -124,6 +124,12 @@ if (typeof jQuery !== 'undefined') {
             search.precinctGroup = $(this).find('input#precinctGroup');
             search.precinctSplit = $(this).find('input#precinctSplit');
             search.precinctSuffix = $(this).find('input#precinctSuffix');
+            search.countyPrecinct = $(this).find('input#countyPrecinct');
+            search.cityPrecinct = $(this).find('input#cityPrecinct');
+            search.judicialDistrict = $(this).find('input#judicialDistrict');
+            search.schoolDistrict = $(this).find('input#schoolDistrict');
+            search.landDistrict = $(this).find('input#landDistrict');
+            
             search.importDate = $(this).find('select#importDate');
             search.months = $(this).find('select#months').each(function() { $(this).prop('disabled',true); });
             search.useNewlyRegistered = $(this).find('input#useNewlyRegistered').each(function() { 
@@ -133,11 +139,12 @@ if (typeof jQuery !== 'undefined') {
             search.electionType = $(this).find('select#electionType').each(function() { $(this).width(search.zip.width()*0.7); });
             search.votedBefore = $(this).find('input#votedBefore');
             search.votedAfter = $(this).find('input#votedAfter');
+            search.minVoteCount = $(this).find('input#minVoteCount');
             search.historyVoteType = $(this).find('select#historyVoteType').each(function() { $(this).width(search.zip.width()*0.7); });
             search.absentee = $(this).find('input#absentee');
             search.partyVoted = $(this).find('select#partyVoted').each(function() { $(this).width(search.firstName.width()*0.7); });
             search.findVoters = $(this).find('button#findVoters').button().click(function() {
-                $.voterContactManager.search.POSTsearch($.extend({
+                $.voterContactManager.search.POSTsearch($.extend(true,{
                     name: { 
                         firstName: search.firstName.val(),
                         middleName: search.middleName.val(),
@@ -165,36 +172,48 @@ if (typeof jQuery !== 'undefined') {
                     congressionalDistrict: search.congressionalDistrict.val(),
                     senateDistrict: search.senateDistrict.val(),
                     countyCommissionDistrict: search.countyCommissionDistrict.val(),
-                    schoolBoardDistrict: search.schoolBoardDistrict.val(),
-                    precinct: {
-                        precinct: search.precinct.val(),
-                        precinctGroup: search.precinctGroup.val(),
-                        precinctSplit: search.precinctSplit.val(),
-                        precinctSuffix: search.precinctSuffix.val()
-                    },
                     importDate: search.importDate.val(),
                     months: search.months.val(),
                     useNewlyRegistered: search.useNewlyRegistered.is(':checked'),
                     state: {
                         code: search.stateCode.val()
                     },
-                    electionType: search.electionType.val(),
-                    electionDate: {
-                        votedBefore: search.votedBefore.val(),
-                        votedAfter: search.votedAfter.val()
+                    history: {
+                        electionType: search.electionType.val(),
+                        electionDate: {
+                            votedBefore: search.votedBefore.val(),
+                            votedAfter: search.votedAfter.val()
+                        },
+                        minVoteCount: search.minVoteCount.val()
                     }
                 },{
                     stateSpecificFields: function(stateCode) {
                         switch(stateCode) {
                             case 'FL':
                                 return {
-                                    historyVoteType: search.historyVoteType.val(),
-                                    partyVoted: search.partyVoted.val()
+                                    precinct: {
+                                        precinct: search.precinct.val(),
+                                        precinctGroup: search.precinctGroup.val(),
+                                        precinctSplit: search.precinctSplit.val(),
+                                        precinctSuffix: search.precinctSuffix.val()
+                                    },
+                                    schoolBoardDistrict: search.schoolBoardDistrict.val(),
+                                    history: {
+                                        historyVoteType: search.historyVoteType.val(),
+                                        partyVoted: search.partyVoted.val()
+                                    }
                                 }
                                 break;
                             case 'GA':
                                 return {
-                                    absentee: search.absentee.val()
+                                    history: {
+                                        absentee: search.absentee.val()
+                                    },
+                                    countyPrecinct: search.countyPrecinct.val(),
+                                    cityPrecinct: search.cityPrecinct.val(),
+                                    judicialDistrict: search.judicialDistrict.val(),
+                                    schoolDistrict: search.schoolDistrict.val(),
+                                    landDistrict: search.landDistrict.val()
                                 }
                         }
                     }
@@ -289,6 +308,106 @@ if (typeof jQuery !== 'undefined') {
                     $.each(getInitResponse.historyVoteTypes,function(index,historyVoteType) {
                         $('<option />').val(historyVoteType.code).html(historyVoteType.name).appendTo(search.historyVoteType);
                     });
+                    search.schoolBoardDistrict.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'FL':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
+                    search.precinct.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'FL':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
+                    search.precinctGroup.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'FL':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
+                    search.precinctSplit.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'FL':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
+                    search.precinctSuffix.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'FL':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
+                    search.countyPrecinct.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'GA':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
+                    search.cityPrecinct.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'GA':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
+                    search.judicialDistrict.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'GA':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
+                    search.schoolDistrict.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'GA':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
+                    search.landDistrict.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'GA':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
                 });
             }).change();
         }).end().tabs();
