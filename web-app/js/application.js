@@ -144,81 +144,83 @@ if (typeof jQuery !== 'undefined') {
             search.absentee = $(this).find('input#absentee');
             search.partyVoted = $(this).find('select#partyVoted').each(function() { $(this).width(search.firstName.width()*0.7); });
             search.findVoters = $(this).find('button#findVoters').button().click(function() {
-                $.voterContactManager.search.POSTsearch($.extend(true,{
-                    name: { 
-                        firstName: search.firstName.val(),
-                        middleName: search.middleName.val(),
-                        lastName: search.lastName.val()
-                    },
-                    gender: {
-                        code: search.gender.val()
-                    },
-                    race: {
-                        code: search.race.val()
-                    },
-                    bornBefore: search.bornBefore.val(),
-                    bornAfter: search.bornAfter.val(),
-                    county: {
-                        code: search.county.val()
-                    },
-                    address: {
-                        line1: search.address.val(),
-                        city: search.city.val(),
-                        zip: search.zip.val()
-                    },
-                    voterStatus: {
-                        code: search.status.val()
-                    },
-                    congressionalDistrict: search.congressionalDistrict.val(),
-                    senateDistrict: search.senateDistrict.val(),
-                    countyCommissionDistrict: search.countyCommissionDistrict.val(),
-                    importDate: search.importDate.val(),
-                    months: search.months.val(),
-                    useNewlyRegistered: search.useNewlyRegistered.is(':checked'),
-                    state: {
-                        code: search.stateCode.val()
-                    },
-                    history: {
-                        electionType: search.electionType.val(),
-                        electionDate: {
-                            votedBefore: search.votedBefore.val(),
-                            votedAfter: search.votedAfter.val()
+                $.voterContactManager.search.POSTsearch({
+                    search: $.extend(true,{
+                        name: { 
+                            firstName: search.firstName.val(),
+                            middleName: search.middleName.val(),
+                            lastName: search.lastName.val()
                         },
-                        minVoteCount: search.minVoteCount.val()
-                    }
-                },{
-                    stateSpecificFields: function(stateCode) {
-                        switch(stateCode) {
-                            case 'FL':
-                                return {
-                                    precinct: {
-                                        precinct: search.precinct.val(),
-                                        precinctGroup: search.precinctGroup.val(),
-                                        precinctSplit: search.precinctSplit.val(),
-                                        precinctSuffix: search.precinctSuffix.val()
-                                    },
-                                    schoolBoardDistrict: search.schoolBoardDistrict.val(),
-                                    history: {
-                                        historyVoteType: search.historyVoteType.val(),
-                                        partyVoted: search.partyVoted.val()
-                                    }
-                                }
-                                break;
-                            case 'GA':
-                                return {
-                                    history: {
-                                        absentee: search.absentee.val()
-                                    },
-                                    countyPrecinct: search.countyPrecinct.val(),
-                                    cityPrecinct: search.cityPrecinct.val(),
-                                    judicialDistrict: search.judicialDistrict.val(),
-                                    schoolDistrict: search.schoolDistrict.val(),
-                                    landDistrict: search.landDistrict.val()
-                                }
+                        gender: {
+                            code: search.gender.val()
+                        },
+                        race: {
+                            code: search.race.val()
+                        },
+                        bornBefore: search.bornBefore.val(),
+                        bornAfter: search.bornAfter.val(),
+                        county: {
+                            code: search.county.val()
+                        },
+                        address: {
+                            line1: search.address.val(),
+                            city: search.city.val(),
+                            zip: search.zip.val()
+                        },
+                        voterStatus: {
+                            code: search.status.val()
+                        },
+                        congressionalDistrict: search.congressionalDistrict.val(),
+                        senateDistrict: search.senateDistrict.val(),
+                        countyCommissionDistrict: search.countyCommissionDistrict.val(),
+                        importDate: search.importDate.val(),
+                        months: search.months.val(),
+                        useNewlyRegistered: search.useNewlyRegistered.is(':checked'),
+                        state: {
+                            code: search.stateCode.val()
+                        },
+                        history: {
+                            electionType: search.electionType.val(),
+                            electionDate: {
+                                votedBefore: search.votedBefore.val(),
+                                votedAfter: search.votedAfter.val()
+                            },
+                            minVoteCount: search.minVoteCount.val()
                         }
-                    }
-                }.stateSpecificFields(search.stateCode.val())),function(getSearchResponse, textStatus, jqXHR) {
-                    
+                    },{
+                        stateSpecificFields: function(stateCode) {
+                            switch(stateCode) {
+                                case 'FL':
+                                    return {
+                                        precinct: {
+                                            precinct: search.precinct.val(),
+                                            precinctGroup: search.precinctGroup.val(),
+                                            precinctSplit: search.precinctSplit.val(),
+                                            precinctSuffix: search.precinctSuffix.val()
+                                        },
+                                        schoolBoardDistrict: search.schoolBoardDistrict.val(),
+                                        history: {
+                                            historyVoteType: search.historyVoteType.val(),
+                                            partyVoted: search.partyVoted.val()
+                                        }
+                                    }
+                                    break;
+                                case 'GA':
+                                    return {
+                                        history: {
+                                            absentee: search.absentee.val()
+                                        },
+                                        countyPrecinct: search.countyPrecinct.val(),
+                                        cityPrecinct: search.cityPrecinct.val(),
+                                        judicialDistrict: search.judicialDistrict.val(),
+                                        schoolDistrict: search.schoolDistrict.val(),
+                                        landDistrict: search.landDistrict.val()
+                                    }
+                            }
+                        }
+                    }.stateSpecificFields(search.stateCode.val()))
+                },function(getSearchResponse, textStatus, jqXHR) {
+                            
                 });
             });
             search.stateCode = $(this).find('select#stateCode').change(function() {
