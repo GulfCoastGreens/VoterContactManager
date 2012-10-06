@@ -30,7 +30,7 @@
                         </tr>
                         <tr>
                           <td style="vertical-align: top;">
-                            <table border="0" style="font-size: 70%">
+                            <table border="0" style="font-size: 70%" width="100%">
                               <thead>
                                 <tr>
                                   <th class="ui-state-default ui-widget-header" colspan="3">Name Parameters</th>
@@ -97,7 +97,7 @@
                             </table>
                           </td>
                           <td style="vertical-align: top;">
-                            <table border="0" style="font-size: 70%">
+                            <table border="0" style="font-size: 70%" width="100%">
                               <thead>
                                 <tr>
                                   <th class="ui-state-default ui-widget-header" colspan="3">Location Parameters</th>
@@ -138,9 +138,66 @@
                                 </tr>
                               </tbody>
                             </table>
+                            <table border="0" style="font-size: 70%" width="100%">
+                              <thead>
+                                <tr>
+                                  <th class="ui-state-default ui-widget-header" colspan="3">History Parameters</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>
+                                    <label for="electionType">Election Type</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <select id="electionType" name="electionType" />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <label for="votedBefore">Voted Before</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <vcm:jqDatePicker name="votedBefore" />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <label for="votedAfter">Voted After</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <vcm:jqDatePicker name="votedAfter" />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <label for="historyVoteType">Vote Type</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <select id="historyVoteType" name="historyVoteType" />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <label for="absentee">Absentee</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <input id="absentee" name="absentee" type="text" />
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <label for="partyVoted">Party Voted</label>
+                                  </td>
+                                  <td colspan="2">
+                                    <select id="partyVoted" name="partyVoted" />
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
                           </td>
                           <td style="vertical-align: top;">
-                            <table border="0" style="font-size: 70%">
+                            <table border="0" style="font-size: 70%" width="100%">
                               <thead>
                                 <tr>
                                   <th class="ui-state-default ui-widget-header" colspan="3">Registration Parameters</th>
@@ -242,14 +299,14 @@
                       </tbody>
                         <tfoot>
                           <tr>
-                            <td colspan="3" style="font-size: 70%;">
+                            <td colspan="3" style="font-size: 65%;">
                               <button id="findVoters">Find Matching Voters</button>
-                              <label for="importDate" style="padding-left:0.5cm;">Select Import Date</label>
+                              <label for="importDate" style="padding-left:0.3cm;">Select Import Date</label>
                               <select id="importDate" name="importDate"></select>
-                              <label for="months" style="padding-left:0.5cm;">Limit to new party registrations in the last</label>
+                              <label for="months" style="padding-left:0.3cm;">Limit to new party registrations in the last</label>
                               <g:select name="months" from="${[1,2,3,4,5,6,7,8,9,10,11,12]}" optionValue="${{(it < 2)?(it+' month'):(it+' months')}}"/>
                               <input type="checkbox" name="useNewlyRegistered" title="You MUST have both a county and party affiliation selected to use this" disabled="" id="useNewlyRegistered"/>
-                              <label for="useNewlyRegistered">Enable filter</label>
+                              <label for="useNewlyRegistered">Enable</label>
                             </td>
                           </tr>
                         </tfoot>

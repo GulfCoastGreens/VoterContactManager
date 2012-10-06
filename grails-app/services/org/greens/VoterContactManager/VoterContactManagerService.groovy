@@ -13,7 +13,9 @@ class VoterContactManagerService {
             statuses: VoterStatus.findAllByState(state),
             importDates: ImportKey.findAllByState(state).collect { importKey ->
                 return importKey.snapshotDate
-            }
+            },
+            electionTypes: ElectionType.findAllByState(state),
+            historyVoteTypes: (stateCode in ['FL'])?HistoryVoteType.findAllByState(state):[]
         ]
     }
 }

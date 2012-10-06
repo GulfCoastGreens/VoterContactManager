@@ -84,19 +84,38 @@ if (typeof jQuery !== 'undefined') {
         var search = new Object();
         $('div#tabs').find('div#search').each(function() {
             var searchTab = $(this);
+            $(this).find('table:first').find('table').find('tr').find('td:last').css({'text-align':'right'});
             search.firstName = $(this).find('input#firstName');
             search.middleName = $(this).find('input#firstName');
             search.lastName = $(this).find('input#firstName');
-            search.gender = $(this).find('select#gender');
-            search.race = $(this).find('select#race');
+            search.gender = $(this).find('select#gender').each(function() { $(this).width(search.firstName.width()*0.7) });
+            search.race = $(this).find('select#race').each(function() { $(this).width(search.firstName.width()*0.7); });
             search.bornBefore = $(this).find('input#bornBefore');
             search.bornAfter = $(this).find('input#bornAfter');
-            search.county = $(this).find('select#county');
+            search.county = $(this).find('select#county').each(function() { $(this).width(search.firstName.width()*0.7); }).unbind('change').change(function() {
+                if($(this).val() != "" && search.party.val() != "") {
+                    search.months.prop('disabled',false);
+                    search.useNewlyRegistered.prop('disabled',false);
+                } else {
+                    search.months.prop('disabled',true);
+                    search.useNewlyRegistered.prop('disabled',true);
+                    search.useNewlyRegistered.prop('checked',false);
+                }
+            });
             search.address = $(this).find('input#address');
             search.city = $(this).find('input#city');
             search.zip = $(this).find('input#zip');
-            search.party = $(this).find('select#party');
-            search.status = $(this).find('select#status');
+            search.party = $(this).find('select#party').each(function() { $(this).width(search.firstName.width()*0.7); }).unbind('change').change(function() {
+                if($(this).val() != "" && search.county.val() != "") {
+                    search.months.prop('disabled',false);
+                    search.useNewlyRegistered.prop('disabled',false);
+                } else {
+                    search.months.prop('disabled',true);
+                    search.useNewlyRegistered.prop('disabled',true);
+                    search.useNewlyRegistered.prop('checked',false);
+                }
+            });
+            search.status = $(this).find('select#status').each(function() { $(this).width(search.firstName.width()*0.7); });
             search.congressionalDistrict = $(this).find('input#congressionalDistrict');
             search.senateDistrict = $(this).find('input#senateDistrict');
             search.countyCommissionDistrict = $(this).find('input#countyCommissionDistrict');
@@ -106,10 +125,19 @@ if (typeof jQuery !== 'undefined') {
             search.precinctSplit = $(this).find('input#precinctSplit');
             search.precinctSuffix = $(this).find('input#precinctSuffix');
             search.importDate = $(this).find('select#importDate');
-            search.months = $(this).find('select#months');
-            search.useNewlyRegistered = $(this).find('input#useNewlyRegistered');
+            search.months = $(this).find('select#months').each(function() { $(this).prop('disabled',true); });
+            search.useNewlyRegistered = $(this).find('input#useNewlyRegistered').each(function() { 
+                $(this).prop('disabled',true); 
+                $(this).prop('checked',false); 
+            });
+            search.electionType = $(this).find('select#electionType').each(function() { $(this).width(search.zip.width()*0.7); });
+            search.votedBefore = $(this).find('input#votedBefore');
+            search.votedAfter = $(this).find('input#votedAfter');
+            search.historyVoteType = $(this).find('select#historyVoteType').each(function() { $(this).width(search.zip.width()*0.7); });
+            search.absentee = $(this).find('input#absentee');
+            search.partyVoted = $(this).find('select#partyVoted').each(function() { $(this).width(search.firstName.width()*0.7); });
             search.findVoters = $(this).find('button#findVoters').button().click(function() {
-                $.voterContactManager.search.POSTsearch({
+                $.voterContactManager.search.POSTsearch($.extend({
                     name: { 
                         firstName: search.firstName.val(),
                         middleName: search.middleName.val(),
@@ -149,8 +177,28 @@ if (typeof jQuery !== 'undefined') {
                     useNewlyRegistered: search.useNewlyRegistered.is(':checked'),
                     state: {
                         code: search.stateCode.val()
+                    },
+                    electionType: search.electionType.val(),
+                    electionDate: {
+                        votedBefore: search.votedBefore.val(),
+                        votedAfter: search.votedAfter.val()
                     }
-                },function(getSearchResponse, textStatus, jqXHR) {
+                },{
+                    stateSpecificFields: function(stateCode) {
+                        switch(stateCode) {
+                            case 'FL':
+                                return {
+                                    historyVoteType: search.historyVoteType.val(),
+                                    partyVoted: search.partyVoted.val()
+                                }
+                                break;
+                            case 'GA':
+                                return {
+                                    absentee: search.absentee.val()
+                                }
+                        }
+                    }
+                }.stateSpecificFields(search.stateCode.val())),function(getSearchResponse, textStatus, jqXHR) {
                     
                 });
             });
@@ -176,6 +224,43 @@ if (typeof jQuery !== 'undefined') {
                     search.importDate.empty().append(
                         $('<option />').val("").html('--All Import Dates--')
                     );
+                    search.electionType.empty().append(
+                        $('<option />').val("").html('--Election Type--')
+                    );
+                    search.historyVoteType.empty().append(
+                        $('<option />').val("").html('--Vote Type--')
+                    ).each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'FL':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    });
+                    search.absentee.each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'GA':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    }).val("");
+                    search.partyVoted.empty().append(
+                        $('<option />').val("").html('--Party Voted--')
+                    ).each(function() {
+                        switch(search.stateCode.val()) {
+                            case 'GA':
+                                $(this).parent().parent().show();
+                                break;
+                            default:
+                                $(this).parent().parent().hide();
+                                break;
+                        }
+                    });
                     $.each(getInitResponse.genders,function(index,gender) {
                         $('<option />').val(gender.code).html(gender.name).appendTo(search.gender);
                     });
@@ -186,13 +271,23 @@ if (typeof jQuery !== 'undefined') {
                         $('<option />').val(county.code).html(county.name).appendTo(search.county);
                     });
                     $.each(getInitResponse.parties,function(index,party) {
-                        $('<option />').val(party.code).html(party.name).appendTo(search.party);
+                        $('<option />').val(party.code).html(party.name).appendTo(search.party).each(function() {
+                            if(search.stateCode.val() == 'GA') {
+                                search.partyVoted.append($(this).clone());
+                            }
+                        });
                     });
                     $.each(getInitResponse.statuses,function(index,status) {
                         $('<option />').val(status.code).html(status.name).appendTo(search.status);
                     });
                     $.each(getInitResponse.importDates,function(index,importDate) {
                         $('<option />').val(importDate).html(importDate).appendTo(search.importDate);
+                    });
+                    $.each(getInitResponse.electionTypes,function(index,electionType) {
+                        $('<option />').val(electionType.code).html(electionType.name).appendTo(search.electionType);
+                    });
+                    $.each(getInitResponse.historyVoteTypes,function(index,historyVoteType) {
+                        $('<option />').val(historyVoteType.code).html(historyVoteType.name).appendTo(search.historyVoteType);
                     });
                 });
             }).change();
