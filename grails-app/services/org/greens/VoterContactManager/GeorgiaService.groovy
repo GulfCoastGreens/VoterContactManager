@@ -209,6 +209,7 @@ class GeorgiaService {
             }.call([
                 line1: [row[78..<84].trim(),row[84..<114].trim(),row[114..<116].trim()].findAll { (it) }.join(" "),
                 line2: row[116..<124].trim(),
+                line3: "",
                 city: row[124..<141].trim(),
                 state: importKey.state,
                 zip: [row[141..<146].trim(),row[146..<150].trim()].join()
