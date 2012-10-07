@@ -78,7 +78,7 @@ class FloridaService {
         zin.close()        
     }
     
-    def mergeVoterRecord(String line,ImportKey importKey) {
+    def mergeVoterRecord(String row,ImportKey importKey) {
         InputStream is = new ByteArrayInputStream(row.getBytes())
         is.toCsvReader('separatorChar':"\t").eachLine { tokens ->
             tokens = tokens.collect { it.trim() }

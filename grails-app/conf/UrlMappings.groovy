@@ -1,11 +1,14 @@
 class UrlMappings {
 
 	static mappings = {
-//		"/$controller/$action?/$id?"{
-//			constraints {
-//				// apply constraints here
-//			}
-//		}
+		"/$controller/$action?/$id?"{
+			constraints {
+				// apply constraints here
+			}
+		}
+                "/uploadZippedData/uploadZip"(controller:"voterContactManager",parseRequest: true){ 
+                    action = [GET:"error", PUT:"error", DELETE:"error", POST:"uploadZip"] 
+                } 
                 "/voterContactManager"(controller:"voterContactManager",parseRequest: true){ 
                     action = [GET:"getInit", PUT:"error", DELETE:"error", POST:"error"] 
                 } 

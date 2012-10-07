@@ -78,7 +78,7 @@ class GeorgiaService {
         zin.close()        
     }
     
-    def mergeVoterRecord(String line,ImportKey importKey) {
+    def mergeVoterRecord(String row,ImportKey importKey) {
         { map ->            
             def georgiaVoter = GeorgiaVoter.findWhere([ voterKey: map.voterKey ])
             if(georgiaVoter) {

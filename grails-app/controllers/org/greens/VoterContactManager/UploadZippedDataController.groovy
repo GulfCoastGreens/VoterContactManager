@@ -80,8 +80,9 @@ class UploadZippedDataController {
                 }
                 break                
         }
-        render request.getFileMap().collectEntries { m ->
-            return [name: m.key]
-        } as JSON        
+        render (view:'/index')
+//        render request.getFileMap().collectEntries { m ->
+//            return [name: m.key]
+//        } as JSON        
     }
 }
