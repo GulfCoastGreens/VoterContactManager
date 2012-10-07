@@ -187,7 +187,8 @@ class GeorgiaService {
                 first: row[32..<52].trim(),
                 middle: row[52..<72].trim(),
                 suffix: row[72..<75].trim(),
-                salutation: row[75..<78].trim()
+                salutation: row[75..<78].trim(),
+                prefix: ""
             ]),
             residentAddress: { map ->
                 def address = Address.findWhere(map)

@@ -20,7 +20,7 @@ class FloridaService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
         while ((ze = zin.getNextEntry()) != null) {
             System.out.println("Unzipping " + ze.getName())
-            if(importKey == null) {
+            if(!!!importKey) {
                 Date snapshotDate = new SimpleDateFormat("yyyyMMdd").parse(ze.getName()[17..24])
                 importKey = ImportKey.findBySnapshotDateAndState(snapshotDate,State.findByCode('FL'))
                 if(importKey == null) {
@@ -37,7 +37,6 @@ class FloridaService {
             System.out.println("Date " + importKey.snapshotDate)
             while ((line = br.readLine()) != null) {
                 floridaService.mergeVoterRecord(line,importKey)
-                // println(line)
             }            
         }
         br.close()
@@ -54,7 +53,7 @@ class FloridaService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
         while ((ze = zin.getNextEntry()) != null) {
             System.out.println("Unzipping " + ze.getName())
-            if(importKey == null) {
+            if(!!!importKey) {
                 Date snapshotDate = new SimpleDateFormat("yyyyMMdd").parse(ze.getName()[19..26])
                 importKey = ImportKey.findBySnapshotDateAndState(snapshotDate,State.findByCode('FL'))
                 if(importKey == null) {
@@ -71,7 +70,6 @@ class FloridaService {
             System.out.println("Date " + importKey.snapshotDate)
             while ((line = br.readLine()) != null) {
                 floridaService.mergeHistoryRecord(line,importKey)
-                // println(line)
             }            
         }
         br.close()
@@ -85,7 +83,7 @@ class FloridaService {
             if(tokens[1]) {            
                 { map -> 
                     def floridaVoter = FloridaVoter.findWhere([ voterKey: map.voterKey ])
-                    if(floridaVoter) {
+                    if(!!floridaVoter) {
                         // update
                         floridaVoter.properties = map
                         if(!floridaVoter.save(failOnError:true, flush: true, validate: true)) {
@@ -112,7 +110,7 @@ class FloridaService {
                     county: County.findByCode(tokens[0]),
                     voterKey: { map ->
                         def voterKey = VoterKey.findWhere(map)
-                        if(voterKey) {
+                        if(!!voterKey) {
                             println "Found existing ${GrailsNameUtils.getShortName(voterKey.class)} ${voterKey.voterId}"   
                         } else {
                             voterKey = map as VoterKey
@@ -132,7 +130,7 @@ class FloridaService {
                     ]),
                     name: { map ->
                         def name = Name.findWhere(map)
-                        if(name) {
+                        if(!!name) {
                             println "Found existing ${GrailsNameUtils.getShortName(name.class)} ${name.last}, ${name.first}"                
                         } else {
                             name = map as Name
@@ -150,13 +148,15 @@ class FloridaService {
                         last: tokens[2],
                         suffix: tokens[3],
                         first: tokens[4],
-                        middle: tokens[5]
+                        middle: tokens[5],
+                        prefix: "",
+                        salutation: ""
                     ]),
                     suppressAddress: tokens[6],
-                    residentAddress: (tokens[6] == 'Y')?null:{ map ->
+                    residentAddress: (tokens[6].toBoolean())?null:{ map ->
                         def address = Address.findWhere(map)
-                        if(address) {
-                            println "Found existing ${GrailsNameUtils.getShortName(address.class)} ${address.zip}"                
+                        if(!!address) {
+                            println "Found existing address ${GrailsNameUtils.getShortName(address.class)} ${address.zip}"                
                         } else {
                             address = map as Address
                             if(!address.save(failOnError:true, flush: true, insert: true, validate: true)) {
@@ -165,7 +165,7 @@ class FloridaService {
                                 }
                                 address = null
                             } else {
-                                println "Created new ${GrailsNameUtils.getShortName(address.class)} ${address.zip}"                
+                                println "Created new address ${GrailsNameUtils.getShortName(address.class)} ${address.zip}"                
                             }                            
                         }
                         return address
@@ -177,9 +177,11 @@ class FloridaService {
                         state: { String code ->
                             if(code == importKey.state.code) {
                                 return importKey.state
-                            } else if(code.trim()) {
+                            } else if(!!code.trim()) {
                                 def state = State.findByCode(code.trim())
-                                if(state == null) {
+                                if(!!state) {
+                                    println "Found existing ${GrailsNameUtils.getShortName(state.class)} ${state.name}"                
+                                } else {
                                     state = new State([code: code.trim()])
                                     if(!state.save(failOnError:true, flush: true, insert: true, validate: true)) {
                                         state.errors.allErrors.each {
@@ -192,14 +194,14 @@ class FloridaService {
                                     return state
                                 }
                             }
-                            return null
+                            return importKey.state
                         }.call(tokens[10]),
                         zip: tokens[11]                                
                     ]), 
-                    mailingAddress: (tokens[6] == 'Y')?null:{ map ->
+                    mailingAddress: (tokens[6].toBoolean())?null:{ map ->
                         def address = Address.findWhere(map)
-                        if(address) {
-                            println "Found existing ${GrailsNameUtils.getShortName(address.class)} ${address.zip}"                
+                        if(!!address) {
+                            println "Found existing addres ${GrailsNameUtils.getShortName(address.class)} ${address.zip}"                
                         } else {
                             address = map as Address
                             if(!address.save(failOnError:true, flush: true, insert: true, validate: true)) {
@@ -220,9 +222,11 @@ class FloridaService {
                         state: { String code ->
                             if(code == importKey.state.code) {
                                 return importKey.state
-                            } else if(code.trim()) {
+                            } else if(!!code.trim()) {
                                 def state = State.findByCode(code.trim())
-                                if(state == null) {
+                                if(!!state) {
+                                    println "Found existing ${GrailsNameUtils.getShortName(state.class)} ${state.name}"                
+                                } else {
                                     state = new State([code: code.trim()])
                                     if(!state.save(failOnError:true, flush: true, insert: true, validate: true)) {
                                         state.errors.allErrors.each {
@@ -235,7 +239,7 @@ class FloridaService {
                                     return state
                                 }
                             }
-                            return null
+                            return importKey.state
                         }.call(tokens[16]),
                         zip: tokens[17]                                
                     ]),
@@ -256,7 +260,7 @@ class FloridaService {
                     ),
                     precinct: (tokens[24] || tokens[25] || tokens[26] || tokens[27])?{ map -> 
                         def precinct = Precinct.findWhere(map)
-                        if(precinct) {
+                        if(!!precinct) {
                             println "Found existing ${GrailsNameUtils.getShortName(precinct.class)} ${precinct.precinct}"                
                         } else {
                             precinct = map as Precinct
@@ -288,7 +292,7 @@ class FloridaService {
                     schoolBoardDistrict: tokens[33],
                     daytimePhone: (tokens[34] && tokens[35])?{ map -> 
                         def phone = Phone.findWhere(map)
-                        if(phone) {
+                        if(!!phone) {
                             println "Found existing ${GrailsNameUtils.getShortName(phone.class)} ${phone.phoneNumber}"                
                         } else {
                             phone = map as Phone
