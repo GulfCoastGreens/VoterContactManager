@@ -86,8 +86,8 @@ if (typeof jQuery !== 'undefined') {
             var searchTab = $(this);
             $(this).find('table:first').find('table').find('tr').find('td:last').css({'text-align':'right'});
             search.firstName = $(this).find('input#firstName');
-            search.middleName = $(this).find('input#firstName');
-            search.lastName = $(this).find('input#firstName');
+            search.middleName = $(this).find('input#middleName');
+            search.lastName = $(this).find('input#lastName');
             search.gender = $(this).find('select#gender').each(function() { $(this).width(search.firstName.width()*0.7) });
             search.race = $(this).find('select#race').each(function() { $(this).width(search.firstName.width()*0.7); });
             search.bornBefore = $(this).find('input#bornBefore');
@@ -169,6 +169,9 @@ if (typeof jQuery !== 'undefined') {
                         },
                         voterStatus: {
                             code: search.status.val()
+                        },
+                        party: {
+                            code: search.party.val()
                         },
                         congressionalDistrict: search.congressionalDistrict.val(),
                         senateDistrict: search.senateDistrict.val(),
