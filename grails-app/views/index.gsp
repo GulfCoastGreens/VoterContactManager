@@ -10,8 +10,9 @@
                 <div id="tabs">
                   <ul>
                     <li><a href="#search">Search</a></li>
-                    <li><a href="#logViewer">Log Viewer</a></li>
-                    <li><a href="#queueList">Queue List</a></li>
+                    <li><a href="#matches">Matches</a></li>
+                    <li><a href="#walkingList">Walking Lists</a></li>
+                    <li><a href="#contacts">Contacts</a></li>
                     <li><a href="#import">Import</a></li>
                   </ul>
                   <div id="search" role="main">
@@ -360,10 +361,17 @@
                         </tfoot>
                     </table>
                   </div>
-                  <div id="logViewer" role="main">
-                    
+                  <div id="matches" role="main">
+                    <table id="matches">
+                      <thead>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
                   </div>
-                  <div id="queueList" role="main">
+                  <div id="walkingList" role="main">
+                  </div>
+                  <div id="contacts" role="main">
                   </div>
                   <div id="import" role="main">
                     <h2>Upload Voter Data</h2>

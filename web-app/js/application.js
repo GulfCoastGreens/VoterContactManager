@@ -82,7 +82,10 @@ if (typeof jQuery !== 'undefined') {
             }
         };
         var search = new Object();
-        $('div#tabs').find('div#search').each(function() {
+        var matches = new Object();        
+        $('div#tabs').find('div#matches').each(function() {
+            matches.table = $(this).find('table#matches');
+        }).end().find('div#search').each(function() {
             var searchTab = $(this);
             $(this).find('table:first').find('table').find('tr').find('td:last').css({'text-align':'right'});
             search.firstName = $(this).find('input#firstName');
@@ -230,6 +233,18 @@ if (typeof jQuery !== 'undefined') {
                 $.voterContactManager.voterContactManager.GETgetInit({
                     stateCode: $(this).val()
                 },function(getInitResponse, textStatus, jqXHR) {
+                    // Rebuild Matches Datatable
+                    if("dataTable" in matches) {
+                        matches.dataTable.fnDestroy();
+                    }
+                    matches.dataTable = matches.table.find('tbody').empty().end().find('thead').empty().each(function() {
+                        var tr = $('<tr />').appendTo($(this));
+                        $.each(getInitResponse.matchesHeaders,function(index,header) {
+                            $('<th />').append(header).appendTo(tr);
+                        });
+                    }).end().dataTables();                    
+                    // Finish Rebuild Datatable
+                    
                     search.gender.empty().append(
                         $('<option />').val("").html('--Select Gender--')
                     );
@@ -415,6 +430,6 @@ if (typeof jQuery !== 'undefined') {
                     }).val("");
                 });
             }).change();
-        }).end().tabs();
+        }).end().tabs();        
     })(jQuery);
 }
