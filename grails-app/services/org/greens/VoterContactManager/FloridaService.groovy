@@ -100,7 +100,7 @@ class FloridaService {
                         } else {
                             println "Updated existing ${GrailsNameUtils.getShortName(floridaVoter.class)} ${floridaVoter.voterKey.voterId}"                
                         }                                                                            
-                    } else if(map.voterKey) {
+                    } else if(!!map.voterKey) {
                         floridaVoter = map as FloridaVoter
                         if(!floridaVoter.save(failOnError:true, flush: true, insert: true, validate: true)) {
                             floridaVoter.errors.allErrors.each {
@@ -342,9 +342,9 @@ class FloridaService {
                         eq('electionType',map.electionType)
                         eq('historyVoteType',map.historyVoteType)
                     }
-                    if(floridaHistories) {
+                    if(!!floridaHistories) {
                         println "Found existing ${GrailsNameUtils.getShortName(floridaHistories[0].class)} ${floridaHistories[0].electionDate} - ${floridaHistory.electionType.code}"   
-                    } else if(map.voterKey) {
+                    } else if(!!map.voterKey) {
                         def floridaHistory = map as FloridaHistory
                         if(!floridaHistory.save(failOnError:true, flush: true, insert: true, validate: true)) {
                             floridaHistory.errors.allErrors.each {
@@ -358,7 +358,7 @@ class FloridaService {
                 }.call([
                     voterKey: { map ->
                         def voterKey = VoterKey.findWhere(map)
-                        if(voterKey) {
+                        if(!!voterKey) {
                             println "Found existing ${GrailsNameUtils.getShortName(voterKey.class)} ${voterKey.voterId}"                
                         } else {
                             voterKey = map as VoterKey

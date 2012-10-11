@@ -83,7 +83,7 @@ if (typeof jQuery !== 'undefined') {
         };
         var search = new Object();
         var matches = new Object();        
-        $('div#tabs').find('div#matches').each(function() {
+        var tabs = $('div#tabs').find('div#matches').each(function() {
             matches.table = $(this).find('table#matches');
         }).end().find('div#search').each(function() {
             var searchTab = $(this);
@@ -237,12 +237,38 @@ if (typeof jQuery !== 'undefined') {
                     if("dataTable" in matches) {
                         matches.dataTable.fnDestroy();
                     }
-                    matches.dataTable = matches.table.find('tbody').empty().end().find('thead').empty().each(function() {
-                        var tr = $('<tr />').appendTo($(this));
+                    matches.table.find('tbody').empty().end().find('thead').find('tr').empty().each(function() {
+                        var tr = $(this);
                         $.each(getInitResponse.matchesHeaders,function(index,header) {
                             $('<th />').append(header).appendTo(tr);
                         });
-                    }).end().dataTable();                    
+                        tabs.tabs( "option", "selected", 1 );
+                    }).end().end().each(function() {
+                        matches.dataTable = $(this).dataTable({
+                            "sDom": '<"H"Tfr>t<"F"ip>',
+                            "oTableTools": {
+                                "sSwfPath": "js/TableTools-2.1.3/media/swf/copy_csv_xls_pdf.swf",
+                                "aButtons": [
+                                    "copy", "csv", "xls", "pdf",
+                                    {
+                                        "sExtends":    "collection",
+                                        "sButtonText": "Save",
+                                        "aButtons":    [ "csv", "xls", "pdf" ]
+                                    }
+                                ]                                
+                            },                            
+                            "sScrollX": "100%",
+                            "bStateSave": true,
+                            "bProcessing": true,
+                            "bJQueryUI": true,
+                            "bSort": false,
+                            "bAutoWidth": false,
+                            "sPaginationType": "full_numbers",
+                            "asStripeClasses": [ 'ui-priority-primary', 'ui-priority-secondary' ]                        
+                        });
+                        tabs.tabs( "option", "selected", 0 );
+                    });
+                    
                     // Finish Rebuild Datatable
                     
                     search.gender.empty().append(

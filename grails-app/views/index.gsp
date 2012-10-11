@@ -364,6 +364,7 @@
                   <div id="matches" role="main">
                     <table id="matches">
                       <thead>
+                        <tr></tr>
                       </thead>
                       <tbody>
                       </tbody>
