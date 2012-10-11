@@ -20,6 +20,9 @@ class FloridaService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
         while ((ze = zin.getNextEntry()) != null) {
             System.out.println("Unzipping " + ze.getName())
+            if(ze.getName().size() < 24) {
+                continue
+            }
             if(!!!importKey) {
                 Date snapshotDate = new SimpleDateFormat("yyyyMMdd").parse(ze.getName()[17..24])
                 importKey = ImportKey.findBySnapshotDateAndState(snapshotDate,State.findByCode('FL'))
@@ -53,6 +56,9 @@ class FloridaService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
         while ((ze = zin.getNextEntry()) != null) {
             System.out.println("Unzipping " + ze.getName())
+            if(ze.getName().size() < 26) {
+                continue
+            }
             if(!!!importKey) {
                 Date snapshotDate = new SimpleDateFormat("yyyyMMdd").parse(ze.getName()[19..26])
                 importKey = ImportKey.findBySnapshotDateAndState(snapshotDate,State.findByCode('FL'))
