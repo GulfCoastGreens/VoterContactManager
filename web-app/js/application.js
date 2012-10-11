@@ -242,7 +242,7 @@ if (typeof jQuery !== 'undefined') {
                         $.each(getInitResponse.matchesHeaders,function(index,header) {
                             $('<th />').append(header).appendTo(tr);
                         });
-                    }).end().dataTables();                    
+                    }).end().dataTable();                    
                     // Finish Rebuild Datatable
                     
                     search.gender.empty().append(
