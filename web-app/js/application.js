@@ -226,7 +226,8 @@ if (typeof jQuery !== 'undefined') {
                         }
                     }.stateSpecificFields(search.stateCode.val()))
                 },function(getSearchResponse, textStatus, jqXHR) {
-                            
+                    matches.dataTable.fnClearTable();
+                    matches.dataTable.fnAddData(getSearchResponse);
                 });
             });
             search.stateCode = $(this).find('select#stateCode').change(function() {
