@@ -373,6 +373,34 @@
                   <div id="walkingList" role="main">
                   </div>
                   <div id="contacts" role="main">
+                    <table id="contactAdmin">
+                      <thead>
+                        <tr>
+                          <th class="ui-state-default ui-widget-header" colspan="3">
+                            Contact Administration
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><label for="contactType">Select Contact Type</label></td>
+                          <td><select id="contactType" name="contactType"></select></td>
+                          <td><button id="addContactTypeButton">Add Contact Type</button><button id="editContactTypeButton">Edit Contact Type</button><button id="removeContactTypeButton">Remove Contact Type</button></td>
+                        </tr>
+                      </tbody>
+                      <table id="contacts">
+                        <thead>
+                          <tr>
+                            <th>Last Name</th>
+                            <th>First Name</th>
+                            <th>Middle Name</th>
+                            <th>Nick Name</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                      </table>
+                    </table>
                   </div>
                   <div id="import" role="main">
                     <h2>Upload Voter Data</h2>

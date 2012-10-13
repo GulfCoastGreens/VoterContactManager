@@ -82,9 +82,43 @@ if (typeof jQuery !== 'undefined') {
             }
         };
         var search = new Object();
-        var matches = new Object();        
+        var matches = new Object();   
+        var contacts = new Object();
         var tabs = $('div#tabs').find('div#matches').each(function() {
             matches.table = $(this).find('table#matches');
+        }).end().find('div#contacts').each(function() {
+            $(this).find('table#contactAdmin').width('100%')
+            .end().find('select#contactType').each(function() {
+                contacts.contactTypeAll = $('<option />').val("").html("--All Contacts--");
+                contacts.contactType = $(this).append(contacts.contactTypeAll.clone());
+            })
+            .end().find('button#addContactTypeButton').button()
+            .end().find('button#editContactTypeButton').button()
+            .end().find('button#removeContactTypeButton').button()
+            .end().find('table#contacts').each(function() {
+                contacts.dataTable = (contacts.table = $(this)).dataTable({
+                    "sDom": '<"H"Tfr>t<"F"ip>',
+                    "oTableTools": {
+                        "sSwfPath": "js/TableTools-2.1.3/media/swf/copy_csv_xls_pdf.swf",
+                        "aButtons": [
+                            "copy", "csv", "xls", "pdf",
+                            {
+                                "sExtends":    "collection",
+                                "sButtonText": "Save",
+                                "aButtons":    [ "csv", "xls", "pdf" ]
+                            }
+                        ]                                
+                    },                            
+                    "sScrollX": "100%",
+                    "bStateSave": true,
+                    "bProcessing": true,
+                    "bJQueryUI": true,
+                    "bSort": false,
+                    "bAutoWidth": false,
+                    "sPaginationType": "full_numbers",
+                    "asStripeClasses": [ 'ui-priority-primary', 'ui-priority-secondary' ]                        
+                });
+            });
         }).end().find('div#search').each(function() {
             var searchTab = $(this);
             $(this).find('table:first').find('table').find('tr').find('td:last').css({'text-align':'right'});
