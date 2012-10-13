@@ -52,6 +52,33 @@ if (typeof jQuery !== 'undefined') {
                     });                    
                 }
             },
+            contacts: {
+                PUTaddNewContactType: function(json,callback) {
+                    ///contact/type
+                    json = jQuery.extend(true,{
+                        name: ""
+                    },json);
+                    $.ajax({
+                        url: '/VoterContactManager/contact/type/',
+                        type: "PUT",
+                        dataType : "json",
+                        beforeSend: function (XMLHttpRequest, settings) {
+                            XMLHttpRequest.setRequestHeader("Content-Type", "application/json");
+                            XMLHttpRequest.setRequestHeader("Accept", "application/json");
+                        },
+                        data: JSON.stringify(json),
+                        success: callback,
+                        error: function (jqXHR,  textStatus, errorThrown) {
+                            if (jqXHR.status === 0) {
+                                // Session has probably expired and needs to reload and let CAS take care of the rest
+                                alert('Your session has expired, the page will need to reload and you may be asked to log back in');
+                                // reload entire page - this leads to login page
+                                window.location.reload();
+                            }
+                        }
+                    });                    
+                }
+            },
             voterContactManager: {
                 GETgetInit: function(json,callback) {
                     json = jQuery.extend({
@@ -90,9 +117,92 @@ if (typeof jQuery !== 'undefined') {
             $(this).find('table#contactAdmin').width('100%')
             .end().find('select#contactType').each(function() {
                 contacts.contactTypeAll = $('<option />').val("").html("--All Contacts--");
-                contacts.contactType = $(this).append(contacts.contactTypeAll.clone());
+                contacts.contactType = $(this);
             })
-            .end().find('button#addContactTypeButton').button()
+            .end().find('button#addContactTypeButton').button().click(function() {
+                $('<div />')
+                .data({
+                    name: $('<input />',{
+                        "id": "contactType"
+                    })
+                })
+                .addClass('ui-state-default ui-widget-content')
+                .append(
+                    $('<p />')
+                    .css({
+                        "text-align": "center",
+                        "margin-top": "0px",
+                        "margin-bottom": "0px",
+                        "padding": "0px"
+                    })
+                ).dialog({
+                    autoOpen: true,
+                    bgiframe: true,
+                    resizable: false,
+                    title: 'Add New Contact Type',
+                    height:220,
+                    width:400,
+                    modal: true,
+                    zIndex: 3999,
+                    overlay: {
+                        backgroundColor: '#000',
+                        opacity: 0.5
+                    },
+                    open: function() {
+                        $(this).append(
+                            $('<label />',{
+                                "for": "contactType"
+                            }).html("Contact Type Name: ")
+                        ).append(
+                            $(this).data().name
+                        )
+                    },
+                    buttons: {
+                        "Create New Contact Type": function() {
+                            var dialog = $(this);
+                            if($.trim(dialog.data().name.val()).length < 1) {
+                                alert("Error! You must supply a name for the new Contact Type");
+                            } else {
+                                $.voterContactManager.contacts.PUTaddNewContactType({
+                                    name: $.trim(dialog.data().name.val())
+                                },function(newContactTypeResponse, textStatus, jqXHR) {
+                                    if(newContactTypeResponse.contactType === "error") {
+                                        alert("The contact type you specified caused an error. Try a different name");
+                                    } else {                                        
+                                        contacts.contactType
+                                        .find('option:first').remove().end()
+                                        .append(contacts.contactTypeAll.clone().val(newContactTypeResponse.contactType.id).html(newContactTypeResponse.contactType.name))
+                                        .each(function() {
+                                            var options = $(this).children().detach();
+                                            options.sort(function(a,b) {
+                                                var nameA = $(a).html().toLowerCase();
+                                                var nameB = $(b).html().toLowerCase();
+                                                if (nameA < nameB) //sort string ascending
+                                                    return -1; 
+                                                if (nameA > nameB)
+                                                    return 1;
+                                                return 0; //default return value (no sorting)                                                                                                                                
+                                            });
+                                            $(this).append(options);
+                                        })
+                                        .prepend(contacts.contactTypeAll.clone())
+                                        .val(newContactTypeResponse.contactType.id)
+                                        .change();
+                                        dialog.dialog('close');
+                                        dialog.dialog('destroy');
+                                        dialog.remove();                                                                
+                                    }
+                                });
+                            }
+                        },
+                        "Cancel": function() {
+                            $(this).dialog('close');
+                            $(this).dialog('destroy');
+                            $(this).remove();
+                        }
+                    }
+                });                                                
+            })
             .end().find('button#editContactTypeButton').button()
             .end().find('button#removeContactTypeButton').button()
             .end().find('table#contacts').each(function() {
@@ -268,6 +378,10 @@ if (typeof jQuery !== 'undefined') {
                 $.voterContactManager.voterContactManager.GETgetInit({
                     stateCode: $(this).val()
                 },function(getInitResponse, textStatus, jqXHR) {
+                    contacts.contactType.empty().append(contacts.contactTypeAll.clone());
+                    $.each(getInitResponse.contactTypes,function(index,contactType) {
+                        contacts.contactType.append(contacts.contactTypeAll.clone().val(contactType.id).html(contactType.name))
+                    });                    
                     // Rebuild Matches Datatable
                     if("dataTable" in matches) {
                         matches.dataTable.fnDestroy();

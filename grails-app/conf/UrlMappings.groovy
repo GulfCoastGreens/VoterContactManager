@@ -5,7 +5,13 @@ class UrlMappings {
 			constraints {
 				// apply constraints here
 			}
-		}
+		} // 
+                "/contact"(controller:"contact",parseRequest: true){ 
+                    action = [GET:"getContactsByType", PUT:"addNewContact", DELETE:"error", POST:"uploadZip"] 
+                } 
+                "/contact/type"(controller:"contact",parseRequest: true){ 
+                    action = [GET:"getContactTypes", PUT:"addNewContactType", DELETE:"error", POST:"uploadZip"] 
+                } 
                 "/uploadZippedData/uploadZip"(controller:"voterContactManager",parseRequest: true){ 
                     action = [GET:"error", PUT:"error", DELETE:"error", POST:"uploadZip"] 
                 } 
