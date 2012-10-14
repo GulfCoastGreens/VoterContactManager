@@ -47,6 +47,19 @@ class ContactController {
             }
         }                
     }
+    def editContactType() {
+        withFormat {
+            html {
+                return contactService.editContactType(params.id,params.name)
+            }
+            xml {
+                render contactService.editContactType(params.id,params.name) as XML
+            }
+            json {
+                render contactService.editContactType(params.id,params.name) as JSON
+            }
+        }                
+    }
     def getContactsByType() {
         withFormat {
             html {

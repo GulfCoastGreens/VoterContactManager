@@ -77,6 +77,31 @@ if (typeof jQuery !== 'undefined') {
                             }
                         }
                     });                    
+                },
+                POSTeditContactType: function(json,callback) {
+                    json = jQuery.extend(true,{
+                        name: "",
+                        id: ""
+                    },json);
+                    $.ajax({
+                        url: '/VoterContactManager/contact/type/',
+                        type: "POST",
+                        dataType : "json",
+                        beforeSend: function (XMLHttpRequest, settings) {
+                            XMLHttpRequest.setRequestHeader("Content-Type", "application/json");
+                            XMLHttpRequest.setRequestHeader("Accept", "application/json");
+                        },
+                        data: JSON.stringify(json),
+                        success: callback,
+                        error: function (jqXHR,  textStatus, errorThrown) {
+                            if (jqXHR.status === 0) {
+                                // Session has probably expired and needs to reload and let CAS take care of the rest
+                                alert('Your session has expired, the page will need to reload and you may be asked to log back in');
+                                // reload entire page - this leads to login page
+                                window.location.reload();
+                            }
+                        }
+                    });                    
                 }
             },
             voterContactManager: {
@@ -203,7 +228,102 @@ if (typeof jQuery !== 'undefined') {
                     }
                 });                                                
             })
-            .end().find('button#editContactTypeButton').button()
+            .end().find('button#editContactTypeButton').button().click(function() {
+                if(contacts.contactType.val().toString() === "") {
+                    alert("You must select a contact type to perform this operation");
+                } else {
+                    $('<div />')
+                    .data({
+                        name: $('<input />',{
+                            "id": "contactType"
+                        })
+                    })
+                    .addClass('ui-state-default ui-widget-content')
+                    .append(
+                        $('<p />')
+                        .css({
+                            "text-align": "center",
+                            "margin-top": "0px",
+                            "margin-bottom": "0px",
+                            "padding": "0px"
+                        })
+                    ).dialog({
+                        autoOpen: true,
+                        bgiframe: true,
+                        resizable: false,
+                        title: 'Edit Contact Type',
+                        height:220,
+                        width:400,
+                        modal: true,
+                        zIndex: 3999,
+                        overlay: {
+                            backgroundColor: '#000',
+                            opacity: 0.5
+                        },
+                        open: function() {
+                            $(this).data().name.val(contacts.contactType.find(':selected').text());
+                            $(this).append(
+                                $('<label />',{
+                                    "for": "contactType"
+                                }).html("Contact Type Name: ")
+                            ).append(
+                                $(this).data().name
+                            )
+                        },
+                        buttons: {
+                            "Rename Contact Type": function() {
+                                var dialog = $(this);
+                                if($.trim(dialog.data().name.val()).length < 1) {
+                                    alert("Error! You must supply a name for the new Contact Type");
+                                } else {
+                                    $.voterContactManager.contacts.POSTeditContactType({
+                                        name: $.trim(dialog.data().name.val()),
+                                        id: contacts.contactType.val()
+                                    },function(editContactTypeResponse, textStatus, jqXHR) {
+                                        if(editContactTypeResponse.contactType === "error") {
+                                            alert("The contact type you specified caused an error. Try a different name");
+                                        } else {                                        
+                                            contacts.contactType
+                                            .find('option:first').remove().end()
+                                            .children().each(function(index,option) {
+                                                if($(option).val().toString() === editContactTypeResponse.contactType.id.toString()) {
+                                                    $(option).html(editContactTypeResponse.contactType.name);
+                                                    return false;
+                                                }
+                                                return true;
+                                            }).end()
+                                            .each(function() {
+                                                var options = $(this).children().detach();
+                                                options.sort(function(a,b) {
+                                                    var nameA = $(a).html().toLowerCase();
+                                                    var nameB = $(b).html().toLowerCase();
+                                                    if (nameA < nameB) //sort string ascending
+                                                        return -1; 
+                                                    if (nameA > nameB)
+                                                        return 1;
+                                                    return 0; //default return value (no sorting)                                                                                                                                
+                                                });
+                                                $(this).append(options);
+                                            })
+                                            .prepend(contacts.contactTypeAll.clone())
+                                            .val(editContactTypeResponse.contactType.id)
+                                            .change();
+                                            dialog.dialog('close');
+                                            dialog.dialog('destroy');
+                                            dialog.remove();                                                                
+                                        }
+                                    });
+                                }
+                            },
+                            "Cancel": function() {
+                                $(this).dialog('close');
+                                $(this).dialog('destroy');
+                                $(this).remove();
+                            }
+                        }
+                    });                                                
+                }
+            })
             .end().find('button#removeContactTypeButton').button()
             .end().find('table#contacts').each(function() {
                 contacts.dataTable = (contacts.table = $(this)).dataTable({
