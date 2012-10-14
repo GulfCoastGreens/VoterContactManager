@@ -102,6 +102,32 @@ if (typeof jQuery !== 'undefined') {
                             }
                         }
                     });                    
+                },
+                DELETEremoveContactType: function(json,callback) {
+                    json = jQuery.extend({
+                        id: "-1"
+                    },json);
+                    $.ajax({
+                        url: "/VoterContactManager/contact/type/?id="+$.trim(json.id),
+                        type: "DELETE",
+                        dataType : "json",
+                        beforeSend: function (XMLHttpRequest, settings) {
+                            XMLHttpRequest.setRequestHeader("Content-Type", "application/json");
+                            XMLHttpRequest.setRequestHeader("Accept", "application/json");
+                        },
+                        data: {
+                            id: $.trim(json.id)
+                        },
+                        success: callback,
+                        error: function (jqXHR,  textStatus, errorThrown) {
+                            if (jqXHR.status === 0) {
+                                // Session has probably expired and needs to reload and let CAS take care of the rest
+                                alert('Your session has expired, the page will need to reload and you may be asked to log back in');
+                                // reload entire page - this leads to login page
+                                window.location.reload();
+                            }
+                        }
+                    });
                 }
             },
             voterContactManager: {
@@ -324,7 +350,63 @@ if (typeof jQuery !== 'undefined') {
                     });                                                
                 }
             })
-            .end().find('button#removeContactTypeButton').button()
+            .end().find('button#removeContactTypeButton').button().click(function() {
+                if(contacts.contactType.val().toString() === "") {
+                    alert("You must select a contact type to perform this operation");
+                } else {
+                    $('<div />')
+                    .addClass('ui-state-default ui-widget-content')
+                    .append(
+                        $('<p />')
+                        .css({
+                            "text-align": "center",
+                            "margin-top": "0px",
+                            "margin-bottom": "0px",
+                            "padding": "0px"
+                        })
+                    ).dialog({
+                        autoOpen: true,
+                        bgiframe: true,
+                        resizable: false,
+                        title: 'Delete Contact Type',
+                        height:220,
+                        width:400,
+                        modal: true,
+                        zIndex: 3999,
+                        overlay: {
+                            backgroundColor: '#000',
+                            opacity: 0.5
+                        },
+                        open: function() {
+                            $(this).append(
+                                $('<span />').html("Are you SURE you want to delete this contact type?")
+                            );
+                        },
+                        buttons: {
+                            "Remove Contact Type": function() {
+                                var dialog = $(this);
+                                $.voterContactManager.contacts.DELETEremoveContactType({
+                                    id: contacts.contactType.val()
+                                },function(removeContactTypeResponse, textStatus, jqXHR) {
+                                    if(removeContactTypeResponse.status === "error") {
+                                        alert("The contact type you specified caused an error. Try a different name");
+                                    } else {                                        
+                                        contacts.contactType.find('option:selected').remove();
+                                        dialog.dialog('close');
+                                        dialog.dialog('destroy');
+                                        dialog.remove();                                                                
+                                    }
+                                });                                
+                            },
+                            "Cancel": function() {
+                                $(this).dialog('close');
+                                $(this).dialog('destroy');
+                                $(this).remove();
+                            }
+                        }
+                    });                                                
+                }
+            })
             .end().find('table#contacts').each(function() {
                 contacts.dataTable = (contacts.table = $(this)).dataTable({
                     "sDom": '<"H"Tfr>t<"F"ip>',

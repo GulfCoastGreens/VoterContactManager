@@ -60,6 +60,19 @@ class ContactController {
             }
         }                
     }
+    def removeContactType() {
+        withFormat {
+            html {
+                return contactService.removeContactType(params.id)
+            }
+            xml {
+                render contactService.removeContactType(params.id) as XML
+            }
+            json {
+                render contactService.removeContactType(params.id) as JSON
+            }
+        }                
+    }
     def getContactsByType() {
         withFormat {
             html {

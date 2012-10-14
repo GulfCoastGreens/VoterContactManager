@@ -10,7 +10,7 @@ class UrlMappings {
                     action = [GET:"getContactsByType", PUT:"addNewContact", DELETE:"error", POST:"uploadZip"] 
                 } 
                 "/contact/type"(controller:"contact",parseRequest: true){ 
-                    action = [GET:"getContactTypes", PUT:"addNewContactType", DELETE:"error", POST:"editContactType"] 
+                    action = [GET:"getContactTypes", PUT:"addNewContactType", DELETE:"removeContactType", POST:"editContactType"] 
                 } 
                 "/uploadZippedData/uploadZip"(controller:"voterContactManager",parseRequest: true){ 
                     action = [GET:"error", PUT:"error", DELETE:"error", POST:"uploadZip"] 

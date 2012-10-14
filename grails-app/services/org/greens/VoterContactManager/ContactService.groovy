@@ -42,6 +42,20 @@ class ContactService {
         }
         return [ contactType: "error"]        
     }
+    def removeContactType(id) {
+        ContactType contactType = ContactType.get(id)
+        if(!!contactType) {
+            Contact.createCriteria().listDistinct {
+                createAlias("contactTypes","c")
+                eq("c.name",contactType.name)
+            }.each { contact ->
+                contact.removeFromContactTypes(contactType)
+            }
+            contactType.delete(flush: true)
+            return [ status: "success"]
+        }
+        return [ status: "error" ]
+    }
     def getContactsByType(String contactTypeName = "") {
         def contactType = ContactType.findByName(contactTypeName)
         if(!!contactType) {
