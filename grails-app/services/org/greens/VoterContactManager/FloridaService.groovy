@@ -186,7 +186,8 @@ class FloridaService {
                             } else if(!!code.trim()) {
                                 def state = State.findByCode(code.trim())
                                 if(!!state) {
-                                    println "Found existing ${GrailsNameUtils.getShortName(state.class)} ${state.name}"                
+                                    println "Found existing ${GrailsNameUtils.getShortName(state.class)} ${state.name}"  
+                                    return state
                                 } else {
                                     state = new State([code: code.trim()])
                                     if(!state.save(failOnError:true, flush: true, insert: true, validate: true)) {
@@ -231,7 +232,8 @@ class FloridaService {
                             } else if(!!code.trim()) {
                                 def state = State.findByCode(code.trim())
                                 if(!!state) {
-                                    println "Found existing ${GrailsNameUtils.getShortName(state.class)} ${state.name}"                
+                                    println "Found existing ${GrailsNameUtils.getShortName(state.class)} ${state.name}" 
+                                    return state
                                 } else {
                                     state = new State([code: code.trim()])
                                     if(!state.save(failOnError:true, flush: true, insert: true, validate: true)) {
