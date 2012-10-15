@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta name="layout" content="main"/>
-		<title>Welcome to Grails</title>
+		<title>Welcome to VoterContactManager</title>
                 <!-- link rel="stylesheet" href="${resource(dir: 'css', file: 'default.css')}" type="text/css" -->
 	</head>
 	<body>
@@ -385,12 +385,26 @@
                         <tr>
                           <td><label for="contactType">Select Contact Type</label></td>
                           <td><select id="contactType" name="contactType"></select></td>
-                          <td><button id="addContactTypeButton">Add Contact Type</button><button id="editContactTypeButton">Edit Contact Type</button><button id="removeContactTypeButton">Remove Contact Type</button></td>
+                          <td>
+                            <span id="contactTypeButtonset">
+                              <button id="addContactTypeButton">Add Contact Type</button>
+                              <button id="editContactTypeButton">Edit Contact Type</button>
+                              <button id="removeContactTypeButton">Remove Contact Type</button>
+                            </span>
+                          </td>
                         </tr>
                       </tbody>
-                      <table id="contacts">
+                      <table id="contactsTable">
                         <thead>
                           <tr>
+                            <th colspan="5">
+                              <span id="contactButtonset">
+                                <button id="addContactButton">Add Contact</button>
+                                <button id="removeContactButton">Remove Contact</button></th>
+                              </span>
+                          </tr>
+                          <tr>
+                            <th></th>
                             <th>Last Name</th>
                             <th>First Name</th>
                             <th>Middle Name</th>

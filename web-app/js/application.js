@@ -406,9 +406,166 @@ if (typeof jQuery !== 'undefined') {
                         }
                     });                                                
                 }
-            })
-            .end().find('table#contacts').each(function() {
-                contacts.dataTable = (contacts.table = $(this)).dataTable({
+            }).end().find('span#contactTypeButtonset').buttonset()
+            .end().find('table#contactsTable').each(function() {
+                contacts.dataTable = (contacts.table = $(this)).each(function() {
+                    $(this).find('thead').each(function() {
+                        (contacts.addContactButton = $(this).find('button#addContactButton')).button({
+                            text: false,
+                            icons: {
+                                primary: "ui-icon-person"
+                            }
+                        }).click(function() {
+                            $('<div />')
+                            .data({
+                                last: $('<input />',{
+                                    "id": "last"
+                                }),
+                                first: $('<input />',{
+                                    "id": "first"
+                                }),
+                                middle: $('<input />',{
+                                    "id": "middle"
+                                }),
+                                nickname: $('<input />',{
+                                    "id": "nickname"
+                                })
+                            })
+                            .addClass('ui-state-default ui-widget-content')
+                            .append(
+                                $('<p />')
+                                .css({
+                                    "text-align": "center",
+                                    "margin-top": "0px",
+                                    "margin-bottom": "0px",
+                                    "padding": "0px"
+                                })
+                            ).dialog({
+                                autoOpen: true,
+                                bgiframe: true,
+                                resizable: false,
+                                title: 'Create New Contact',
+                                height:270,
+                                width:400,
+                                modal: true,
+                                zIndex: 3999,
+                                overlay: {
+                                    backgroundColor: '#000',
+                                    opacity: 0.5
+                                },
+                                open: function() {
+                                    $(this).append(
+                                        $('<table />').width('100%')
+                                        .append(
+                                            $('<tr />')
+                                            .append(
+                                                $('<td />')
+                                                .append(
+                                                    $('<label />',{
+                                                        "for": "last"
+                                                    }).html("Last Name: ")
+                                                )
+                                            )
+                                            .append(
+                                                $('<td />')
+                                                .append(
+                                                    $(this).data().last.css({ "float" : "right"})
+                                                )
+                                            )
+                                        )
+                                        .append(
+                                            $('<tr />')
+                                            .append(
+                                                $('<td />')
+                                                .append(
+                                                    $('<label />',{
+                                                        "for": "first"
+                                                    }).html("First Name: ")
+                                                )
+                                            )
+                                            .append(
+                                                $('<td />')
+                                                .append(
+                                                    $(this).data().first.css({ "float" : "right"})
+                                                )
+                                            )
+                                        )
+                                        .append(
+                                            $('<tr />')
+                                            .append(
+                                                $('<td />')
+                                                .append(
+                                                    $('<label />',{
+                                                        "for": "middle"
+                                                    }).html("Middle Name: ")
+                                                )
+                                            )
+                                            .append(
+                                                $('<td />')
+                                                .append(
+                                                    $(this).data().middle.css({ "float" : "right"})
+                                                )
+                                            )
+                                        )
+                                        .append(
+                                            $('<tr />')
+                                            .append(
+                                                $('<td />')
+                                                .append(
+                                                    $('<label />',{
+                                                        "for": "nickname"
+                                                    }).html("Nickname Name: ")
+                                                )
+                                            )
+                                            .append(
+                                                $('<td />')
+                                                .append(
+                                                    $(this).data().nickname.css({ "float" : "right"})
+                                                )
+                                            )
+                                        )
+                                    );
+                                },
+                                buttons: {
+                                    "Create Contact": function() {
+                                        var dialog = $(this);
+//                                        $.voterContactManager.contacts.DELETEremoveContactType({
+//                                            id: contacts.contactType.val()
+//                                        },function(removeContactTypeResponse, textStatus, jqXHR) {
+//                                            if(removeContactTypeResponse.status === "error") {
+//                                                alert("The contact type you specified caused an error. Try a different name");
+//                                            } else {                                        
+//                                                contacts.contactType.find('option:selected').remove();
+                                                dialog.dialog('close');
+                                                dialog.dialog('destroy');
+                                                dialog.remove();                                                                
+//                                            }
+//                                        });                                
+                                    },
+                                    "Cancel": function() {
+                                        $(this).dialog('close');
+                                        $(this).dialog('destroy');
+                                        $(this).remove();
+                                    }
+                                }                                
+                            });
+                        });
+                        (contacts.removeContactButton = $(this).find('button#removeContactButton')).button({
+                            text: false,
+                            icons: {
+                                primary: "ui-icon-trash"
+                            },
+                            disabled: true
+                        }).click(function() {
+                            if(!($(this).button("option","disabled"))) {
+                                var sRow = new Object();
+                                sRow.data = contacts.dataTable.fnGetData((sRow.nRow = $(contacts.dataTable.fnGetNodes( )).find('ui-widget-shadow')[0]));
+                                
+                            }
+                        });
+                        $(this).find('span#contactButtonset').buttonset();
+                    });
+                }).dataTable({
                     "sDom": '<"H"Tfr>t<"F"ip>',
                     "oTableTools": {
                         "sSwfPath": "js/TableTools-2.1.3/media/swf/copy_csv_xls_pdf.swf",
@@ -421,6 +578,17 @@ if (typeof jQuery !== 'undefined') {
                             }
                         ]                                
                     },                            
+                    "aoColumns": [
+                        { "bSortable": false,"bVisible": true,"mDataProp": null,"sDefaultContent":"","fnRender":
+                            function(oObj) {
+                                return "<button type='button' id='details' />";
+                            }
+                        },
+                        { "bVisible": true,"mDataProp": "name.last","sDefaultContent":"" },
+                        { "bVisible": true,"mDataProp": "name.first","sDefaultContent":"" },
+                        { "bVisible": true,"mDataProp": "name.middle","sDefaultContent":"" },
+                        { "bVisible": true,"mDataProp": "name.nickname","sDefaultContent":"" }
+                    ],                    
                     "sScrollX": "100%",
                     "bStateSave": true,
                     "bProcessing": true,
@@ -428,7 +596,76 @@ if (typeof jQuery !== 'undefined') {
                     "bSort": false,
                     "bAutoWidth": false,
                     "sPaginationType": "full_numbers",
-                    "asStripeClasses": [ 'ui-priority-primary', 'ui-priority-secondary' ]                        
+                    "asStripeClasses": [ 'ui-priority-primary', 'ui-priority-secondary' ],
+                    "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                        var nRowData = $(nRow).data();
+                        return $(nRow)
+                        .unbind('click')
+                        .click(function(event) {
+                            if(!($(event.target).is('button#details',nRow))) {
+                                if($(nRow).hasClass('ui-widget-shadow')) {
+                                    $(nRow).removeClass('ui-widget-shadow');
+                                    contacts.removeContactButton.button("option","disabled", true);
+                                } else {
+                                    $(contacts.dataTable.fnGetNodes( )).each(function() {
+                                        $(this).removeClass('ui-widget-shadow');
+                                    });
+                                    $(nRow).addClass('ui-widget-shadow');
+                                    contacts.removeContactButton.button("option","disabled", false);
+                                }
+                            }
+                        })
+                        .each(function() {
+                            $(nRowData.detailsButton = $(this).find('button#details'))
+                            .button({
+                                text: false,
+                                icons: {
+                                    primary: o.theme.buttons.contracted
+                                }
+                            })
+                            .unbind('toggle')
+                            .toggle(
+                                function() {
+                                    // Close open rows properly via event
+                                    $(contacts.dataTable.fnGetNodes()).filter(function(index) {
+                                        return contacts.dataTable.fnIsOpen(this);
+                                    }).each(function(index,Tr) {
+                                        contacts.dataTable.fnClose(Tr);
+                                        $(Tr).find('button#details').button("option","icons").primary = "ui-icon-circle-triangle-e";
+                                    });
+                                    //$($.grep(self.ruleSetEditorDataTable.fnGetNodes(),function(Tr,index) {
+                                    //    return self.ruleSetEditorDataTable.fnIsOpen(Tr);
+                                    //})).find('button#details').trigger('click');                                                                    
+                                    // Open the details
+                                    $(this).button( "option", "icons", {
+                                        primary: "ui-icon-circle-triangle-s"
+                                    });
+                                    $(nRowData.detailsRow = $(contacts.dataTable.fnOpen(
+                                        nRow,
+                                        "<fieldset id='contactDetails' />",
+                                        'ui-widget-content'))
+                                    ).find('fieldset#contactDetails')
+                                    .each(function(index,contactDetailsFieldset) {
+                                        $(contactDetailsFieldset).addClass('ui-widget-content')
+                                        .append(
+                                            $('<legend />')
+                                            .html('Contact Details')
+                                            .addClass('ui-widget-header ui-corner-all')
+                                        );
+
+                                    });
+                                },
+                                function() {
+                                    // Close the details
+                                    $(this).button( "option", "icons", {
+                                        primary: "ui-icon-circle-triangle-e"
+                                    });
+                                    contacts.dataTable.fnClose(nRow);
+                                }
+                            );
+                            
+                        });
+                    }
                 });
             });
         }).end().find('div#search').each(function() {

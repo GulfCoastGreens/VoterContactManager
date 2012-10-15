@@ -9,6 +9,7 @@ class Contact {
     }
     static hasMany = [
         contactPhones: ContactPhone,
+        contactEmails: ContactEmail,
         contactTypes : ContactType
     ]
     Set getAllContactPhones() {
