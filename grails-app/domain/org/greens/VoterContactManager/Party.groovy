@@ -1,9 +1,9 @@
 package org.greens.VoterContactManager
 
 class Party {
-    String code
-    String name
-    String simpleName
+    String code = ''
+    String name = ''
+    String simpleName = ''
     State state
     static constraints = {
         code(unique: ['state','name'],blank:false,nullable:false)
