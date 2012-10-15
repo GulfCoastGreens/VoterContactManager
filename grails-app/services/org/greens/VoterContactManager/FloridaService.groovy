@@ -260,10 +260,26 @@ class FloridaService {
                     ),
                     birthDate: new SimpleDateFormat("MM/dd/yyyy").parse(tokens[21]),
                     registrationDate: new SimpleDateFormat("MM/dd/yyyy").parse(tokens[22]),
-                    party: Party.findWhere(
-                        code: tokens[23],
+                    party: { map ->
+                        def party = Party.findWhere(map)
+                        if(!!party) {
+                            println "Found existing ${GrailsNameUtils.getShortName(party.class)} ${party.code}"                
+                        } else if(!!party.code) {
+                            party = map as Party
+                            if(!party.save(failOnError:true, flush: true, insert: true, validate: true)) {
+                                party.errors.allErrors.each {
+                                    println it
+                                }
+                                party = null
+                            } else {
+                                println "Created new ${GrailsNameUtils.getShortName(party.class)} ${party.code}"                
+                            }                            
+                        }
+                        return party
+                    }.call([
+                        code: tokens[23].trim(),
                         state: importKey.state
-                    ),
+                    ]),
                     precinct: (tokens[24] || tokens[25] || tokens[26] || tokens[27])?{ map -> 
                         def precinct = Precinct.findWhere(map)
                         if(!!precinct) {
