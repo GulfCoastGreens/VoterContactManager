@@ -3,7 +3,7 @@ package org.greens.VoterContactManager
 class GeorgiaHistory extends History implements Serializable {
     String oldVoterId
     Party party
-    String absentee
+    String absentee = ''
     static constraints = {
         voterKey(unique:['county','electionDate','electionType'],nullable:false,validator: { vk -> 
             vk.importKey.state.code == 'GA'

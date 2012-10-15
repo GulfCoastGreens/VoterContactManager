@@ -1,43 +1,43 @@
 package org.greens.VoterContactManager
 
 class GeorgiaVoter extends Voter implements Serializable {
-    String absentee
-    String landDistrict
-    String landLot
+    String absentee = ''
+    String landDistrict = ''
+    String landLot = ''
     Date oldRegistrationDate
-    String oldVoterId
-    String countyPrecinctId
-    String cityPrecinctId
-    String judicialDistrict
-    String schoolDistrict
-    String countyDistrictAName
-    String countyDistrictAValue
-    String countyDistrictBName
-    String countyDistrictBValue
-    String municipalName
-    String municipalCode
-    String wardCityCouncilName
-    String wardCityCouncilValue
-    String citySchoolDistrictName
-    String citySchoolDistrictValue
-    String cityDistrictAName
-    String cityDistrictAValue
-    String cityDistrictBName
-    String cityDistrictBValue
-    String cityDistrictCName
-    String cityDistrictCValue
-    String cityDistrictDName
-    String cityDistrictDValue
+    String oldVoterId = ''
+    String countyPrecinctId = ''
+    String cityPrecinctId = ''
+    String judicialDistrict = ''
+    String schoolDistrict = ''
+    String countyDistrictAName = ''
+    String countyDistrictAValue = ''
+    String countyDistrictBName = ''
+    String countyDistrictBValue = ''
+    String municipalName = ''
+    String municipalCode = ''
+    String wardCityCouncilName = ''
+    String wardCityCouncilValue = ''
+    String citySchoolDistrictName = ''
+    String citySchoolDistrictValue = ''
+    String cityDistrictAName = ''
+    String cityDistrictAValue = ''
+    String cityDistrictBName = ''
+    String cityDistrictBValue = ''
+    String cityDistrictCName = ''
+    String cityDistrictCValue = ''
+    String cityDistrictDName = ''
+    String cityDistrictDValue = ''
     Date dateLastVoted
     ElectionType electionType
     Party partyLastVoted
     Date lastContactDate
     Date dateAdded
     Date dateChanged
-    String districtCombo
-    String residenceBuildingDesignation
-    String mailAddressRuralRouteOrPOB
-    String combinedStreetAddress
+    String districtCombo = ''
+    String residenceBuildingDesignation = ''
+    String mailAddressRuralRouteOrPOB = ''
+    String combinedStreetAddress = ''
     static constraints = {
         voterKey(unique:['county'],blank:false,nullable:false,validator: { vk -> 
             vk.importKey.state.code == 'GA'

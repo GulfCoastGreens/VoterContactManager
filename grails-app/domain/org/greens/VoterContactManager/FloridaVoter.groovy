@@ -1,10 +1,10 @@
 package org.greens.VoterContactManager
 
 class FloridaVoter extends Voter implements Serializable { 
-    String suppressAddress
+    String suppressAddress = ''
     Party party
     Precinct precinct
-    String schoolBoardDistrict
+    String schoolBoardDistrict = ''
     Phone daytimePhone
     static constraints = {
         voterKey(unique:['county'],blank:false,nullable:false,validator: { vk -> 
