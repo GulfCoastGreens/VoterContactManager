@@ -90,13 +90,26 @@ class ContactController {
     def addNewContact() {
         withFormat {
             html {
-                return contactService.addNewContact(params.name)
+                return contactService.addNewContact(params.name,params.nickname,params.contactType.name)
             }
             xml {
-                render contactService.addNewContact(params.name) as XML
+                render contactService.addNewContact(params.name,params.nickname,params.contactType.name) as XML
             }
             json {
-                render contactService.addNewContact(params.name) as JSON
+                render contactService.addNewContact(params.name,params.nickname,params.contactType.name) as JSON
+            }
+        }                
+    }
+    def removeContact() {
+        withFormat {
+            html {
+                return contactService.removeContact(params.id)
+            }
+            xml {
+                render contactService.removeContact(params.id) as XML
+            }
+            json {
+                render contactService.removeContact(params.id) as JSON
             }
         }                
     }

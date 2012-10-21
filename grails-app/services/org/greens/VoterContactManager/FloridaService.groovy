@@ -263,10 +263,10 @@ class FloridaService {
                     birthDate: new SimpleDateFormat("MM/dd/yyyy").parse(tokens[21]),
                     registrationDate: new SimpleDateFormat("MM/dd/yyyy").parse(tokens[22]),
                     party: { map ->
-                        def party = Party.findWhere(map)
+                        def party = Party.findByCodeAndState(map.code,map.state)                        
                         if(!!party) {
                             println "Found existing ${GrailsNameUtils.getShortName(party.class)} ${party.code}"                
-                        } else if(!!party.code) {
+                        } else if(!!map.code) {
                             party = map as Party
                             if(!party.save(failOnError:true, flush: true, insert: true, validate: true)) {
                                 party.errors.allErrors.each {

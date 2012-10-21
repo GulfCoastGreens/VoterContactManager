@@ -6,9 +6,9 @@ class Party {
     String simpleName = ''
     State state
     static constraints = {
-        code(unique: ['state','name'],blank:false,nullable:false)
-        name(unique: ['code','state'],blank:false,nullable:false)
-        simpleName(unique: true,blank:false,nullable:false)
-        state(unique: ['code','name'],blank:false,nullable:false)
+        code(unique: ['state','name','simpleName'],blank:false,nullable:false)
+        name(unique: ['code','state','simpleName'],blank:true,nullable:false)
+        simpleName(unique: ['code','name','state'],blank:true,nullable:false)
+        state(unique: ['code','name','simpleName'],blank:false,nullable:false)
     }
 }

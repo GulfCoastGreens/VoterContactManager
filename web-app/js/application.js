@@ -128,6 +128,57 @@ if (typeof jQuery !== 'undefined') {
                             }
                         }
                     });
+                },
+                PUTaddNewContact: function(json,callback) {
+                    ///contact/type
+                    json = jQuery.extend(true,{
+                        name: ""
+                    },json);
+                    $.ajax({
+                        url: '/VoterContactManager/contact/',
+                        type: "PUT",
+                        dataType : "json",
+                        beforeSend: function (XMLHttpRequest, settings) {
+                            XMLHttpRequest.setRequestHeader("Content-Type", "application/json");
+                            XMLHttpRequest.setRequestHeader("Accept", "application/json");
+                        },
+                        data: JSON.stringify(json),
+                        success: callback,
+                        error: function (jqXHR,  textStatus, errorThrown) {
+                            if (jqXHR.status === 0) {
+                                // Session has probably expired and needs to reload and let CAS take care of the rest
+                                alert('Your session has expired, the page will need to reload and you may be asked to log back in');
+                                // reload entire page - this leads to login page
+                                window.location.reload();
+                            }
+                        }
+                    });                    
+                },
+                DELETEremoveContact: function(json,callback) {
+                    json = jQuery.extend({
+                        id: "-1"
+                    },json);
+                    $.ajax({
+                        url: "/VoterContactManager/contact/?id="+$.trim(json.id),
+                        type: "DELETE",
+                        dataType : "json",
+                        beforeSend: function (XMLHttpRequest, settings) {
+                            XMLHttpRequest.setRequestHeader("Content-Type", "application/json");
+                            XMLHttpRequest.setRequestHeader("Accept", "application/json");
+                        },
+                        data: {
+                            id: $.trim(json.id)
+                        },
+                        success: callback,
+                        error: function (jqXHR,  textStatus, errorThrown) {
+                            if (jqXHR.status === 0) {
+                                // Session has probably expired and needs to reload and let CAS take care of the rest
+                                alert('Your session has expired, the page will need to reload and you may be asked to log back in');
+                                // reload entire page - this leads to login page
+                                window.location.reload();
+                            }
+                        }
+                    });
                 }
             },
             voterContactManager: {
@@ -445,7 +496,7 @@ if (typeof jQuery !== 'undefined') {
                                 bgiframe: true,
                                 resizable: false,
                                 title: 'Create New Contact',
-                                height:270,
+                                height:280,
                                 width:400,
                                 modal: true,
                                 zIndex: 3999,
@@ -514,7 +565,7 @@ if (typeof jQuery !== 'undefined') {
                                                 .append(
                                                     $('<label />',{
                                                         "for": "nickname"
-                                                    }).html("Nickname Name: ")
+                                                    }).html("Nickname: ")
                                                 )
                                             )
                                             .append(
@@ -529,18 +580,26 @@ if (typeof jQuery !== 'undefined') {
                                 buttons: {
                                     "Create Contact": function() {
                                         var dialog = $(this);
-//                                        $.voterContactManager.contacts.DELETEremoveContactType({
-//                                            id: contacts.contactType.val()
-//                                        },function(removeContactTypeResponse, textStatus, jqXHR) {
-//                                            if(removeContactTypeResponse.status === "error") {
-//                                                alert("The contact type you specified caused an error. Try a different name");
-//                                            } else {                                        
-//                                                contacts.contactType.find('option:selected').remove();
+                                        $.voterContactManager.contacts.PUTaddNewContact({
+                                            name: {
+                                                last: $.trim(dialog.data().last.val()),
+                                                first: $.trim(dialog.data().first.val()),
+                                                middle: $.trim(dialog.data().middle.val())
+                                            },
+                                            nickname: $.trim(dialog.data().nickname.val()),
+                                            contactType: {
+                                                name: contacts.contactType.val()
+                                            }
+                                        },function(addContactResponse, textStatus, jqXHR) {
+                                            if(addContactResponse.contact === "error") {
+                                                alert("The contact type you specified caused an error. Try a different name");
+                                            } else {
+                                                contacts.dataTable.fnAddData([ addContactResponse.contact ]);
                                                 dialog.dialog('close');
                                                 dialog.dialog('destroy');
                                                 dialog.remove();                                                                
-//                                            }
-//                                        });                                
+                                            }
+                                        });                                
                                     },
                                     "Cancel": function() {
                                         $(this).dialog('close');
@@ -558,8 +617,64 @@ if (typeof jQuery !== 'undefined') {
                             disabled: true
                         }).click(function() {
                             if(!($(this).button("option","disabled"))) {
-                                var sRow = new Object();
-                                sRow.data = contacts.dataTable.fnGetData((sRow.nRow = $(contacts.dataTable.fnGetNodes( )).find('ui-widget-shadow')[0]));
+                                $('<div />')
+                                .data({
+                                    nRow: $(contacts.dataTable.fnGetNodes( )).find('.ui-widget-shadow')[0],
+                                    aData: contacts.dataTable.fnGetData($(contacts.dataTable.fnGetNodes( )).find('.ui-widget-shadow')[0])
+                                })
+                                .addClass('ui-state-default ui-widget-content')
+                                .append(
+                                    $('<p />')
+                                    .css({
+                                        "text-align": "center",
+                                        "margin-top": "0px",
+                                        "margin-bottom": "0px",
+                                        "padding": "0px"
+                                    })
+                                ).dialog({
+                                    autoOpen: true,
+                                    bgiframe: true,
+                                    resizable: false,
+                                    title: 'Delete Contact',
+                                    height:220,
+                                    width:400,
+                                    modal: true,
+                                    zIndex: 3999,
+                                    overlay: {
+                                        backgroundColor: '#000',
+                                        opacity: 0.5
+                                    },
+                                    open: function() {
+                                        $(this).append(
+                                            $('<span />').html("Are you SURE you want to delete this contact?")
+                                        );
+                                    },
+                                    buttons: {
+                                        "Remove Contact": function() {
+                                            var dialog = $(this);
+                                            $.voterContactManager.contacts.DELETEremoveContact({
+                                                id: dialog.data().aData[0].contactId
+                                            },function(removeContactResponse, textStatus, jqXHR) {
+                                                alert(dialog.data().aData[0].contactId);
+                                                alert(JSON.stringify(dialog.data().aData));
+                                                if(removeContactResponse.status === "error") {
+                                                    alert("The contact you specified caused an error. Try refresh first");
+                                                } else {             
+                                                    
+                                                    contacts.dataTable.fnDeleteRow(contacts.dataTable.fnGetPosition(dialog.data().nRow));
+                                                    dialog.dialog('close');
+                                                    dialog.dialog('destroy');
+                                                    dialog.remove();                                                                
+                                                }
+                                            });                                
+                                        },
+                                        "Cancel": function() {
+                                            $(this).dialog('close');
+                                            $(this).dialog('destroy');
+                                            $(this).remove();
+                                        }
+                                    }
+                                });                                                
                                 
                             }
                         });
@@ -587,7 +702,7 @@ if (typeof jQuery !== 'undefined') {
                         { "bVisible": true,"mDataProp": "name.last","sDefaultContent":"" },
                         { "bVisible": true,"mDataProp": "name.first","sDefaultContent":"" },
                         { "bVisible": true,"mDataProp": "name.middle","sDefaultContent":"" },
-                        { "bVisible": true,"mDataProp": "name.nickname","sDefaultContent":"" }
+                        { "bVisible": true,"mDataProp": "nickname","sDefaultContent":"" }
                     ],                    
                     "sScrollX": "100%",
                     "bStateSave": true,
@@ -620,7 +735,7 @@ if (typeof jQuery !== 'undefined') {
                             .button({
                                 text: false,
                                 icons: {
-                                    primary: o.theme.buttons.contracted
+                                    primary: "ui-icon-circle-triangle-e"
                                 }
                             })
                             .unbind('toggle')
@@ -821,6 +936,7 @@ if (typeof jQuery !== 'undefined') {
                     $.each(getInitResponse.contactTypes,function(index,contactType) {
                         contacts.contactType.append(contacts.contactTypeAll.clone().val(contactType.id).html(contactType.name))
                     });                    
+                    contacts.dataTable.fnAddData(getInitResponse.contacts);
                     // Rebuild Matches Datatable
                     if("dataTable" in matches) {
                         matches.dataTable.fnDestroy();

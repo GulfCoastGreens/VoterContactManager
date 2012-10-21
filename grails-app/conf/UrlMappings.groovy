@@ -7,7 +7,7 @@ class UrlMappings {
 			}
 		} // 
                 "/contact"(controller:"contact",parseRequest: true){ 
-                    action = [GET:"getContactsByType", PUT:"addNewContact", DELETE:"error", POST:"uploadZip"] 
+                    action = [GET:"getContactsByType", PUT:"addNewContact", DELETE:"removeContact", POST:"uploadZip"] 
                 } 
                 "/contact/type"(controller:"contact",parseRequest: true){ 
                     action = [GET:"getContactTypes", PUT:"addNewContactType", DELETE:"removeContactType", POST:"editContactType"] 

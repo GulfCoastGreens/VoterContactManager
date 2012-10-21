@@ -2,8 +2,9 @@ package org.greens.VoterContactManager
 
 class Contact {
     Name name
+    String nickname
     VoterKey matchedVoterKey
-    static transients = ['voterRecords','historyRecords','allContactPhones']
+    static transients = ['voterRecords','historyRecords','allContactPhones','contactId']
     static constraints = {
         matchedVoterKey(nullable:true)
     }
@@ -12,6 +13,9 @@ class Contact {
         contactEmails: ContactEmail,
         contactTypes : ContactType
     ]
+    def getContactId() {
+        return id
+    }
     Set getAllContactPhones() {
         if(matchedVoterKey) {
             def voterKeys = VoterKey.withCriteria {
@@ -52,5 +56,5 @@ class Contact {
             }
        } 
        return new HashSet()
-    }
+    }    
 }

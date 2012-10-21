@@ -62,15 +62,13 @@ class GeorgiaBootStrap {
             [ name: 'FEMALE', code: 'F', state: state ] as Gender,   
             [ name: 'UNKNOWN-GENDER', code: 'U', state: state ] as Gender       
         ].each { gender ->
-            if(!Gender.find(gender)) {
-                if(!gender.save(failOnError:true, flush: true, insert: true, validate: true)) {
-                    gender.errors.allErrors.each {
-                        println it
-                    }                
-                } else {
-                    println "Created new ${GrailsNameUtils.getShortName(gender.class)} ${gender.code} - ${gender.name}"                
-                }                                                        
-            }
+            if(!gender.save(failOnError:true, flush: true, insert: true, validate: true)) {
+                gender.errors.allErrors.each {
+                    println it
+                }                
+            } else {
+                println "Created new ${GrailsNameUtils.getShortName(gender.class)} ${gender.code} - ${gender.name}"                
+            }                                                        
         }
         [
             [ code: '000', name: 'UNKNOWN', state: state ] as ElectionType,

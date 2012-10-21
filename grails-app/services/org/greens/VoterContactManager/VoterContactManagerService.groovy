@@ -18,7 +18,8 @@ class VoterContactManagerService {
             electionTypes: ElectionType.findAllByState(state),
             historyVoteTypes: (stateCode in ['FL'])?HistoryVoteType.findAllByState(state):[],
             matchesHeaders: StateVoterFields.fields."${stateCode}",
-            contactTypes: contactService.getContactTypes().contactTypes
+            contactTypes: contactService.getContactTypes().contactTypes,
+            contacts: contactService.getContactsByType().contacts
         ]
     }
 }

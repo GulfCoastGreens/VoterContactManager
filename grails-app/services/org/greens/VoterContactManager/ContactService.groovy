@@ -64,10 +64,10 @@ class ContactService {
                 eq("c.name",contactType.name)
             }]
         }
-        return [ contacts : Contacts.findAll() ]
+        return [ contacts : Contact.findAll()*.properties ]
     }
-    def addNewContact(nameMap) {        
-        Name name = Name.findWhere(nameMap as Name)
+    def addNewContact(nameMap,nickname,contactTypeName) {        
+        Name name = Name.findWhere(nameMap)
         if(!name) {
             name = nameMap as Name
             if(!name.save(failOnError:true, flush: true, insert: true, validate: true)) {
@@ -80,17 +80,39 @@ class ContactService {
             }                                                                
         }
         if(!!name) {
-            Contact contact = new Contact(name: name)
+            println("First Name is ${name.first}")
+            Contact contact = new Contact(name: name,nickname: nickname)
             if(!contact.save(failOnError:true, flush: true, insert: true, validate: true)) {
                 contact.errors.allErrors.each {
                     println it
                 }
-                contact = null
+                return [ contact: "error" ]
             } else {
                 println "Created new ${GrailsNameUtils.getShortName(contact.class)} ${contact.name.first}"                
-            }                                                                
-            return [ contact: contact ]
+            }                           
+            def contactType = ContactType.findByName(contactTypeName)
+            if(!!contactType) {
+                contact.addToContactTypes(contactType)
+                if(!contact.save(failOnError:true, flush: true, validate: true)) {
+                    contact.errors.allErrors.each {
+                        println it
+                    }
+                    return [ contact: "error" ]
+                } else {
+                    println "Created new ${GrailsNameUtils.getShortName(contact.class)} ${contact.name.first}"                
+                }                           
+            }
+            return [ contact: contact.properties ]
         }
         return [ contact: "error" ]
+    }
+    
+    def removeContact(id) {
+        def contact = Contact.get(id)
+        if(!!contact) {
+            contact.delete(flush: true)
+            return [ status: "success"]
+        }
+        return [ status: "error" ]
     }
 }
