@@ -243,7 +243,8 @@ class FloridaBootStrap {
             [code:'REF',name:'Reform Party',simpleName:'Reform',state:state] as Party,
             [code:'REP',name:'Republican Party of Florida',simpleName:'Republican',state:state] as Party,
             [code:'TPF',name:'Tea Party of Florida',simpleName:'Tea',state:state] as Party,                    
-            [code:'NPA',name:'No Party Affiliation',simpleName:'Unaffiliated',state:state] as Party                    
+            [code:'NPA',name:'No Party Affiliation',simpleName:'Unaffiliated',state:state] as Party,                    
+            [code:'UNK',name:'Unknown',simpleName:'Unknown',state:state] as Party                    
         ].each { party ->
             if(!party.save(failOnError:true, flush: true, insert: true, validate: true)) {
                 party.errors.allErrors.each {
