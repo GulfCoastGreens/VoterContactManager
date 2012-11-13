@@ -69,7 +69,19 @@ environments {
         // TODO: grails.serverURL = "http://www.changeme.com"
     }
 }
-
+oauth {
+    providers {
+        google {
+            api = GoogleApi
+            key = '456446753607.apps.googleusercontent.com'
+            secret = 'gKLxVl73umtxIGglFB_hIpCj'
+            scope = 'https://www.google.com/m8/feeds'
+            // successUri = '/your/success/page'
+            // failureUri = '/your/failure/page'
+        }
+    }
+    debug = true
+}
 // log4j configuration
 log4j = {
     // Example of changing the log pattern for the default console appender:

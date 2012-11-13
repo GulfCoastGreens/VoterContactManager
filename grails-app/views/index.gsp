@@ -2,6 +2,11 @@
 <html>
 	<head>
 		<meta name="layout" content="main"/>
+                <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+                <script type="text/javascript">
+                  google.load("maps", "2");
+                  google.load( 'gdata', '2');
+                </script>                
 		<title>Welcome to VoterContactManager</title>
                 <!-- link rel="stylesheet" href="${resource(dir: 'css', file: 'default.css')}" type="text/css" -->
 	</head>
@@ -373,6 +378,7 @@
                   <div id="walkingList" role="main">
                   </div>
                   <div id="contacts" role="main">
+                    <button id="googleAuthorize">Authorize for Google Sync</button>
                     <table id="contactAdmin">
                       <thead>
                         <tr>

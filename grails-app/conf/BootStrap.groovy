@@ -10,6 +10,9 @@ class BootStrap {
                 println "#### Development Mode (Start Up)"
                 println "#### Building some test topics"
                 println "#### Building some test queues"
+                // def contactService = new ContactService()
+                // contactService.testBuilder()
+                // contactService.getGoogleContactsList()
                 if(State.findByCode('FL') == null) {
                     FloridaBootStrap.bootStrap()
                 }
