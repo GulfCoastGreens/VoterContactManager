@@ -378,6 +378,7 @@
                   <div id="walkingList" role="main">
                   </div>
                   <div id="contacts" role="main">
+                    <oauth:connect provider="google" id="google-link" returnTo="[controller: 'contact', action: 'getToken']">Connect to Google</oauth:connect>
                     <button id="googleAuthorize">Authorize for Google Sync</button>
                     <table id="contactAdmin">
                       <thead>

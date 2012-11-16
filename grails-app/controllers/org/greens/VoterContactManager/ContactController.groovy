@@ -1,9 +1,12 @@
 package org.greens.VoterContactManager
 
 import grails.converters.*
+import uk.co.desirableobjects.oauth.scribe.OauthService
+import org.scribe.model.Token 
 
 class ContactController {
     def contactService
+    OauthService oauthService
     def index = { 
         switch(request.method){
             case "POST":
@@ -20,6 +23,29 @@ class ContactController {
                 break
         }           
     }    
+    // Try here http://www.grailsblog.pl/2012/04/oauth-logging-in-grails-made-easy-with.html
+    def getGoogleAccessToken() {
+      String sessionKey = oauthService.findSessionKeyForAccessToken('google')
+      return session[sessionKey]
+    }    
+    def show(){
+      def calendars = oauthService.getGoogleResource(getGoogleAccessToken(), 'http://www.google.com/m8/feeds/contacts/default/full?key=${grailsApplication.config.oauth.providers.google.key}')
+      def calendarsJSON = JSON.parse(calendars.body)
+      render calendarsJSON
+
+    }    
+    Token getToken() {
+        Token googleAccessToken = session[oauthService.findSessionKeyForAccessToken('google')]
+        oauthService.getGoogleResource(googleAccessToken, 'http://www.google.com/m8/feeds/contacts/default/full')
+        // String sessionKey = oauthService.findSessionKeyForAccessToken('google')
+        System.out.println(sessionKey)
+        System.out.println("Session Key is ${session[sessionKey]}")
+        // return session[sessionKey]
+        redirect(uri:'/')
+    }    
+    def getGoogleContacts() {
+        
+    }
     def getContactTypes() { 
         withFormat {
             html {

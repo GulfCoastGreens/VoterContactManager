@@ -12,6 +12,13 @@ class UrlMappings {
                 "/contact/type"(controller:"contact",parseRequest: true){ 
                     action = [GET:"getContactTypes", PUT:"addNewContactType", DELETE:"removeContactType", POST:"editContactType"] 
                 } 
+                "/contact/success"(controller:"contact",parseRequest: true){ 
+                    action = [GET:"getToken", PUT:"addNewContactType", DELETE:"removeContactType", POST:"editContactType"] 
+                } 
+                "/oauth/google/authenticate"(controller:'oauth', action: 'callback')
+//                "/oauth/google/authenticate"(controller:"contact",parseRequest: true){ 
+//                    action = [GET:"getToken", PUT:"addNewContactType", DELETE:"removeContactType", POST:"editContactType"] 
+//                } 
                 "/uploadZippedData/uploadZip"(controller:"voterContactManager",parseRequest: true){ 
                     action = [GET:"error", PUT:"error", DELETE:"error", POST:"uploadZip"] 
                 } 

@@ -28,7 +28,7 @@ environments {
         dataSource {
             dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
             // url = "jdbc:mysql://192.168.1.142:3306/VoterContactManager"
-            url = "jdbc:postgresql://192.168.1.142:5432/VoterContactManagerDev"
+            url = "jdbc:postgresql://localhost:5432/VoterContactManagerDev"
             loggingSql = true
         }
     }

@@ -10,6 +10,13 @@ import javax.servlet.http.HttpSession
 class ContactService {
     static transactional = true
     // OauthService oauthService
+    def getGoogleContacts() {
+        return withHttp(uri: "http://www.google.com") {
+           def html = get(path : '/m8/feeds/contacts/default/full',headers: ['GData-Version': '3.0' ], query : [key:'AIzaSyDG8Af8zr2kRr8odedTFhYiq7o7x6UFdDw'])
+           assert html.HEAD.size() == 1
+           assert html.BODY.size() == 1
+        }        
+    }
     def testBuilder() {
         // initialze a new builder and give a default URL
         def http = new HTTPBuilder( 'http://ajax.googleapis.com' )

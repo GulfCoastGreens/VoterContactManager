@@ -72,10 +72,13 @@ environments {
 oauth {
     providers {
         google {
-            api = GoogleApi
-            key = '456446753607.apps.googleusercontent.com'
-            secret = 'gKLxVl73umtxIGglFB_hIpCj'
+            api =  org.scribe.builder.api.GoogleApi
+            key = '456446753607-lhhhato4t79i5j6fh8vsfatpvg2ipur8.apps.googleusercontent.com'
+            secret = 'E6Ii025zJkdnV6hhMHEZd_sI'
             scope = 'https://www.google.com/m8/feeds'
+            // successUri = '/'
+            // callback = "${application.baseUrl}/oauth/google/authenticate"
+            callback = "${application.baseUrl}/oauth/callback"
             // successUri = '/your/success/page'
             // failureUri = '/your/failure/page'
         }

@@ -19,6 +19,8 @@ class BootStrap {
                 if(State.findByCode('GA') == null) {
                     GeorgiaBootStrap.bootStrap()
                 }
+                def cs = new ContactService()
+                // System.out.println(cs.getGoogleContacts())
                 break
             case "test":
                 println "#### Test Mode (Start Up)"
