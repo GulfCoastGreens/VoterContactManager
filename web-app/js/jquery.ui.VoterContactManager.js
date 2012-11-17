@@ -92,7 +92,7 @@
                             }).html("Contact Type Name: ")
                         ).append(
                             $(this).data().name
-                        )
+                        );
                     },
                     buttons: {
                         "Create New Contact Type": function() {
@@ -180,7 +180,7 @@
                                 }).html("Contact Type Name: ")
                             ).append(
                                 $(this).data().name
-                            )
+                            );
                         },
                         buttons: {
                             "Rename Contact Type": function() {
@@ -721,7 +721,7 @@
                                             historyVoteType: searchElements.historyVoteType.val(),
                                             partyVoted: searchElements.partyVoted.val()
                                         }
-                                    }
+                                    };
                                     break;
                                 case 'GA':
                                     return {
@@ -733,7 +733,7 @@
                                         judicialDistrict: searchElements.judicialDistrict.val(),
                                         schoolDistrict: searchElements.schoolDistrict.val(),
                                         landDistrict: searchElements.landDistrict.val()
-                                    }
+                                    };
                             }
                         }
                     }.stateSpecificFields(stateCode.val()))
@@ -749,7 +749,7 @@
                 },function(getInitResponse, textStatus, jqXHR) {
                     self.contactType.empty().append(self.contactElements.contactTypeAll.clone());
                     $.each(getInitResponse.contactTypes,function(index,contactType) {
-                        self.contactType.append(self.contactElements.contactTypeAll.clone().val(contactType.id).html(contactType.name))
+                        self.contactType.append(self.contactElements.contactTypeAll.clone().val(contactType.id).html(contactType.name));
                     });                    
                     self.contactsDataTable.fnAddData(getInitResponse.contacts);
                     // Rebuild Matches Datatable
