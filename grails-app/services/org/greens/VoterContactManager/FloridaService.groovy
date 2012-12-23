@@ -16,6 +16,7 @@ class FloridaService {
         ZipEntry ze = null
         byte[] buf = new byte[1024];        
         String baseExtract = new FloridaVoter().domainClass.grailsApplication.mainContext.servletContext.getRealPath("/extract")
+        FloridaStagingData.executeUpdate("delete from FloridaStagingData");
         while ((ze = zin.getNextEntry()) != null) {
             if(ze.getName().size() < 24) {
                 continue
@@ -46,9 +47,34 @@ class FloridaService {
                 }                
             }
             File f = new File(extractFullPath)
-            FloridaService.mergeVoterRecord(f,importKey)
+            f.withReader { r ->
+                r.toCsvReader('separatorChar':"\t").eachLine { tokens ->
+                    if(tokens.size() > 2)
+                        FloridaStagingData.createFromList(tokens)
+                }
+            }
+            f.delete()
         }
-        zin.close()
+        // FloridaStagingData.appendUniqueStates()
+        FloridaStagingData.updateStates()
+        FloridaStagingData.updateRaces(importKey.state)
+        FloridaStagingData.updateGenders(importKey.state)
+        FloridaStagingData.updateVoterStatuses(importKey.state)
+        FloridaStagingData.updateParties(importKey.state)
+        //FloridaStagingData.appendUniqueParties(importKey.state)
+        FloridaStagingData.updateNames()
+        //FloridaStagingData.appendUniqueNames()
+        FloridaStagingData.updateAddresses(importKey.state)
+        //FloridaStagingData.appendUniqueAddresses(importKey.state)
+        FloridaStagingData.updatePrecincts(importKey.state)
+//            FloridaStagingData.appendUniquePrecincts(importKey.state)
+        FloridaStagingData.updatePhones()
+//            FloridaStagingData.appendUniquePhoneNumbers()
+        FloridaStagingData.updateVoterKeys(importKey)
+//            FloridaStagingData.appendUniqueVoterKeys(importKey)
+        //FloridaStagingData.updateIndexes(importKey)
+//            FloridaStagingData.appendVoters(importKey)
+        FloridaStagingData.updateVoters(importKey)
     }
     static processHistories(ZipInputStream zin) {
         def importKey
@@ -424,5 +450,57 @@ class FloridaService {
             }
         }
         f.delete()
+    }
+    def createVoterTemp(def filename) {
+        FloridaVoter.withSession { s ->
+            s.createSQLQuery("DROP TABLE IF EXISTS TempVoter").executeUpdate()            
+            s.createSQLQuery("""
+                CREATE TABLE "TempVoter"
+                (
+                  "County Code" character varying(3),
+                  "Voter ID" bigint,
+                  "Name Last" character varying(30),
+                  "Name Suffix" character varying(5),
+                  "Name First" character varying(30),
+                  "Name Middle" character varying(30),
+                  "Suppress Address" character varying(1),
+                  "Residence Address Line 1" character varying(50),
+                  "Residence Address Line 2" character varying(40),
+                  "Residence City USPS" character varying(40),
+                  "Residence State" character varying(2),
+                  "Residence Zipcode" character varying(12),
+                  "Mailing Address Line 1" character varying(40),
+                  "Mailing Address Line 2" character varying(40),
+                  "Mailing Address Line 3" character varying(40),
+                  "Mailing City" character varying(40),
+                  "Mailing State" character varying(2),
+                  "Mailing Zipcode" character varying(12),
+                  "Mailing Country" character varying(40),
+                  "Gender" character varying(1),
+                  "Race" character varying(1),
+                  "Birth Date" character varying(10),
+                  "Registration Date" character varying(10),
+                  "Party Affiliation" character varying(3),
+                  "Precinct" character varying(6),
+                  "Precinct Group" character varying(3),
+                  "Precinct Split" character varying(6),
+                  "Precinct Suffix" character varying(3),
+                  "Voter Status" character varying(3),
+                  "Congressional District" character varying(3),
+                  "House District" character varying(3),
+                  "Senate District" character varying(3),
+                  "County Commission District" character varying(3),
+                  "School Board District" character varying(2),
+                  "Daytime Area Code" character varying(3),
+                  "Daytime Phone Number" character varying(7),
+                  "Daytime Phone Extension" character varying(4)
+                )
+                WITH (
+                  OIDS=FALSE
+                )""").executeUpdate()
+            s.createSQLQuery("copy TempVoter from '${filename}' with null as ''").executeUpdate()
+            s.flush()
+            s.clear()
+        }
     }
 }
