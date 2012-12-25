@@ -9,22 +9,18 @@ import org.hibernate.Hibernate
 class FloridaStagingData {
     FloridaVoter floridaVoter
     String countyCode
-    County county
-    VoterKey voterKey
+    ImportKey importKey
     String voterId
-    Name name
     String lastName = ""
     String suffixName = ""
     String firstName = ""
     String middleName = ""
     String suppressAddress = ""
-    Address residenceAddress
     String residenceAddressLine1 = ""
     String residenceAddressLine2 = ""
     String residenceCity = ""
     String residenceState = ""
     String residenceZipcode = ""
-    Address mailingAddress
     String mailingAddressLine1 = ""
     String mailingAddressLine2 = ""
     String mailingAddressLine3 = ""
@@ -33,20 +29,15 @@ class FloridaStagingData {
     String mailingZipcode = ""
     String mailingCountry = ""
     String gender = ""
-    Gender genderMatch
     String race = ""
-    Race raceMatch
     Date birthDate
     Date registrationDate
     String partyAffiliation = ""
-    Party party
     String precinct = ""
     String precinctGroup = ""
     String precinctSplit = ""
     String precinctSuffix = ""
-    Precinct precinctMatch
     String voterStatus = ""
-    VoterStatus voterStatusMatch
     String congressionalDistrict = ""
     String houseDistrict = ""
     String senateDistrict = ""
@@ -55,34 +46,24 @@ class FloridaStagingData {
     String daytimeAreaCode = ""
     String daytimePhoneNumber = ""
     String daytimePhoneExtension = ""
-    Phone phone
     static constraints = {
         floridaVoter(nullable:true)
         countyCode(unique: ['voterId'],blank:false,nullable:false)
         voterId(unique: ['countyCode'],blank:false,nullable:false)
         birthDate(nullable:true)
         registrationDate(nullable:true)
-        mailingAddress(nullable:true)
-        residenceAddress(nullable:true)
-        party(nullable:true)
-        precinctMatch(nullable:true)
-        raceMatch(nullable:true)
-        genderMatch(nullable:true)
-        voterStatusMatch(nullable:true)
-        name(nullable:true)
-        county(nullable:true)
-        phone(nullable:true)
-        voterKey(nullable:true)
+        importKey(nullable:true)
     }
     
-    static def createFromList(def row) {
+    static def createFromList(File f,def importKeyId) {
         FloridaStagingData.withSession { s ->
-            s.createSQLQuery(""" 
+            def insertQuery = s.createSQLQuery(""" 
                 INSERT INTO florida_staging_data (
                     id,
                     version,
                     county_code,
                     voter_id,
+                    import_key_id,
                     last_name,
                     suffix_name,
                     first_name,
@@ -123,6 +104,7 @@ class FloridaStagingData {
                     0,
                     :county_code,
                     :voter_id,
+                    ${importKeyId},
                     :last_name,
                     :suffix_name,
                     :first_name,
@@ -159,45 +141,55 @@ class FloridaStagingData {
                     :daytime_phone_number,
                     :daytime_phone_extension
                 )
-            """).setProperties([
-                county_code : row[0].toString().trim(),
-                voter_id : row[1].toString().trim(),
-                last_name : row[2].toString().trim(),
-                suffix_name : row[3].toString().trim(),
-                first_name : row[4].toString().trim(),
-                middle_name : row[5].toString().trim(),
-                suppress_address : row[6].toString().trim(),
-                residence_address_line1 : row[7].toString().trim(),
-                residence_address_line2 : row[8].toString().trim(),
-                residence_city : row[9].toString().trim(),
-                residence_state : row[10].toString().trim(),
-                residence_zipcode : row[11].toString().trim(),
-                mailing_address_line1 : row[12].toString().trim(),
-                mailing_address_line2 : row[13].toString().trim(),
-                mailing_address_line3 : row[14].toString().trim(),
-                mailing_city : row[15].toString().trim(),
-                mailing_state : row[16].toString().trim(),
-                mailing_zipcode : row[17].toString().trim(),
-                mailing_country : row[18].toString().trim(),
-                gender : row[19].toString().trim(),
-                race : row[20].toString().trim(),
-                birth_date : (!!!row[21].toString().trim())?null:new SimpleDateFormat("MM/dd/yyyy").parse(row[21].toString().trim()),
-                registration_date : (!!!row[22].toString().trim())?null:new SimpleDateFormat("MM/dd/yyyy").parse(row[22].toString().trim()),
-                party_affiliation : row[23].toString().trim(),
-                precinct : row[24].toString().trim(),
-                precinct_group : row[25].toString().trim(),
-                precinct_split : row[26].toString().trim(),
-                precinct_suffix : row[27].toString().trim(),
-                voter_status : row[28].toString().trim(),
-                congressional_district : row[29].toString().trim(),
-                house_district : row[30].toString().trim(),
-                senate_district : row[31].toString().trim(),
-                county_commission_district : row[32].toString().trim(),
-                school_board_district : row[33].toString().trim(),
-                daytime_area_code : row[34].toString().trim(),
-                daytime_phone_number : row[35].toString().trim(),
-                daytime_phone_extension : row[36].toString().trim()                            
-            ]).executeUpdate()
+            """)
+            f.withReader { r ->
+                r.toCsvReader('separatorChar':"\t").eachLine { row ->
+                    if(row.size() > 2) {
+                        insertQuery.setProperties([
+                            county_code : row[0].toString().trim(),
+                            voter_id : row[1].toString().trim(),
+                            last_name : row[2].toString().trim(),
+                            suffix_name : row[3].toString().trim(),
+                            first_name : row[4].toString().trim(),
+                            middle_name : row[5].toString().trim(),
+                            suppress_address : row[6].toString().trim(),
+                            residence_address_line1 : row[7].toString().trim(),
+                            residence_address_line2 : row[8].toString().trim(),
+                            residence_city : row[9].toString().trim(),
+                            residence_state : row[10].toString().trim(),
+                            residence_zipcode : row[11].toString().trim(),
+                            mailing_address_line1 : row[12].toString().trim(),
+                            mailing_address_line2 : row[13].toString().trim(),
+                            mailing_address_line3 : row[14].toString().trim(),
+                            mailing_city : row[15].toString().trim(),
+                            mailing_state : row[16].toString().trim(),
+                            mailing_zipcode : row[17].toString().trim(),
+                            mailing_country : row[18].toString().trim(),
+                            gender : row[19].toString().trim(),
+                            race : row[20].toString().trim(),
+                            birth_date : (!!!row[21].toString().trim())?null:new SimpleDateFormat("MM/dd/yyyy").parse(row[21].toString().trim()),
+                            registration_date : (!!!row[22].toString().trim())?null:new SimpleDateFormat("MM/dd/yyyy").parse(row[22].toString().trim()),
+                            party_affiliation : row[23].toString().trim(),
+                            precinct : row[24].toString().trim(),
+                            precinct_group : row[25].toString().trim(),
+                            precinct_split : row[26].toString().trim(),
+                            precinct_suffix : row[27].toString().trim(),
+                            voter_status : row[28].toString().trim(),
+                            congressional_district : row[29].toString().trim(),
+                            house_district : row[30].toString().trim(),
+                            senate_district : row[31].toString().trim(),
+                            county_commission_district : row[32].toString().trim(),
+                            school_board_district : row[33].toString().trim(),
+                            daytime_area_code : row[34].toString().trim(),
+                            daytime_phone_number : row[35].toString().trim(),
+                            daytime_phone_extension : row[36].toString().trim()                            
+                        ]).executeUpdate()
+                        s.flush()
+                        s.clear()
+                    }
+                }
+            }
+            f.delete()
         }
     }
     static def createFromListOld(def row) {

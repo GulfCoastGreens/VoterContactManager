@@ -46,14 +46,7 @@ class FloridaService {
                     }                    
                 }                
             }
-            File f = new File(extractFullPath)
-            f.withReader { r ->
-                r.toCsvReader('separatorChar':"\t").eachLine { tokens ->
-                    if(tokens.size() > 2)
-                        FloridaStagingData.createFromList(tokens)
-                }
-            }
-            f.delete()
+            FloridaStagingData.createFromList(new File(extractFullPath),importKey.id)
         }
         // FloridaStagingData.appendUniqueStates()
         FloridaStagingData.updateStates()
@@ -111,8 +104,7 @@ class FloridaService {
                     }                    
                 }                
             }
-            File f = new File(extractFullPath)
-            FloridaService.mergeHistoryRecord(f,importKey)
+            FloridaHistoryStagingData.createFromList(new File(extractFullPath),importKey.id)
             
         }
         zin.close()
